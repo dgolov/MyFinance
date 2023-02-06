@@ -21,7 +21,7 @@ class Account(Base):
     currency_id = Column(Integer, ForeignKey('currency.id'))
     updated_at = Column(DateTime)
     amount = Column(Float)
-    add_to_balance = Column(Boolean)
+    add_to_balance = Column(Boolean, default=True)
 
 
 class Category(Base):
@@ -45,7 +45,6 @@ class Income(Base):
     amount = Column(Float)
     account_id = Column(Integer, ForeignKey('account.id'))
     date = Column(DateTime)
-    company = Column(String)
 
 
 class Expense(Base):
@@ -59,4 +58,3 @@ class Expense(Base):
     amount = Column(Float)
     account_id = Column(Integer, ForeignKey('account.id'))
     date = Column(DateTime)
-    person = Column(String)

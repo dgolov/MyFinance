@@ -46,10 +46,10 @@ class BaseFinance(BaseModel):
 class Income(BaseFinance):
     """ Доходы
     """
-    company: str = None
+    pass
 
 
 class Expense(BaseFinance):
     """ Расходы
     """
-    person: str = None
+    pass
