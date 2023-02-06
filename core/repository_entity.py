@@ -1,5 +1,5 @@
 from MyFinance.models import Expense, Income, Currency, Category, Account
-from MyFinance.schemas import CreateCategory
+from MyFinance.schemas import CreateCategory, CreateCurrency, CreateAccount, CreateFinanceList
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
@@ -35,22 +35,42 @@ class Base:
 
 
 class FinanceEntityBase(Base):
-    def filter_by_date(self, result, start_date: datetime = None, end_date: datetime = None):
+    def _filter_by_date(self, result, start_date: datetime = None, end_date: datetime = None):
         pass
 
-    def amount_sum(self, obj, start_date: datetime = None, end_date: datetime = None):
+    def _amount_sum(self, obj, start_date: datetime = None, end_date: datetime = None):
         result = self.db.query(func.sum(obj.amount).label("total")).all()
         return result
 
 
 class IncomeEntity(FinanceEntityBase):
-    def get_income_list(self, date: datetime = None):
+    def get_income_list(self, start_date: datetime = None, end_date: datetime = None):
         return self._all(Income)
+
+    def get_income_sum(self, start_date: datetime = None, end_date: datetime = None):
+        return self._amount_sum(Income)
+
+    def create(self, data: CreateFinanceList):
+        income = Income(**data.dict())
+        return self._add(data=income)
+
+    def get_income_by_id(self, pk):
+        return self._filter_by_id(obj=Income, pk=pk)
 
 
 class ExpenseEntity(FinanceEntityBase):
-    def get_expense_list(self, date: datetime = None):
+    def get_expense_list(self, start_date: datetime = None, end_date: datetime = None):
         return self._all(Expense)
+
+    def get_expense_sum(self, start_date: datetime = None, end_date: datetime = None):
+        return self._amount_sum(Expense)
+
+    def create(self, data: CreateFinanceList):
+        expense = Expense(**data.dict())
+        return self._add(data=expense)
+
+    def get_expense_by_id(self, pk):
+        return self._filter_by_id(obj=Expense, pk=pk)
 
 
 class CurrencyEntity(Base):
