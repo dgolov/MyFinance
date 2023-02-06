@@ -1,5 +1,5 @@
-from datetime import date
-from pydantic import BaseModel, validator
+from datetime import datetime
+from pydantic import BaseModel, Field
 
 
 class Category(BaseModel):
@@ -10,14 +10,8 @@ class Category(BaseModel):
 class BaseFinance(BaseModel):
     title: str
     category: Category
-    amount: float
-    date: date
-
-    @validator("amount")
-    def check_amount(cls, value):
-        if value < 0:
-            raise ValueError("Argument amount must be more than 0")
-        return value
+    amount: float = Field(..., gt=0)
+    date: datetime = Field(default_factory=datetime.now)
 
 
 class Income(BaseFinance):

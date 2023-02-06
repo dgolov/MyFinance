@@ -16,7 +16,7 @@ def get_income_by_id(pk):
     return {"key": pk}
 
 
-@app.post("/income")
+@app.post("/income", response_model=Income)
 def create_income(income: Income):
     return income
 
