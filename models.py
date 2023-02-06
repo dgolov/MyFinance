@@ -43,6 +43,7 @@ class Account(BaseModel):
     currency: Currency
     updated_at: datetime = datetime.now()
     amount: float
+    add_to_balance: bool = True
 
     class Config:
         validate_assignment = True
