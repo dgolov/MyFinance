@@ -1,5 +1,8 @@
-from core.engine import Base
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, Float, ForeignKey, Boolean
+
+
+Base = declarative_base()
 
 
 class Currency(Base):

@@ -1,2 +1,1 @@
-from .engine import Base
-from MyFinance.models import Expense, Income, Currency, Account, Category
+from MyFinance.models import Base, Expense, Income, Currency, Account, Category
