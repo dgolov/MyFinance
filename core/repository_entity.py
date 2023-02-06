@@ -110,7 +110,7 @@ class AccountEntity(Base):
         result = self._all(Account)
         return self._count(result)
 
-    def create(self, data: Account):
+    def create(self, data: CreateAccount):
         account = Expense(**data.dict())
         return self._add(data=account)
 
