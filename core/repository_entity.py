@@ -24,8 +24,9 @@ class Base:
     def _one(result):
         return result.one()
 
-    def _count(self, obj):
-        return len(self.db.query(obj).scalars().all())
+    @staticmethod
+    def _count(result):
+        return len(result)
 
     def _add(self, data):
         self.db.add(data)
@@ -90,7 +91,8 @@ class CategoryEntity(Base):
         return self._all(Category)
 
     def det_category_count(self):
-        return self._count(Category)
+        result = self._all(Category)
+        return self._count(result)
 
     def create(self, data: CreateCategory):
         category = Category(**data.dict())
@@ -105,7 +107,8 @@ class AccountEntity(Base):
         return self._all(Account)
 
     def det_account_count(self):
-        return self._count(Account)
+        result = self._all(Account)
+        return self._count(result)
 
     def create(self, data: Account):
         account = Expense(**data.dict())
