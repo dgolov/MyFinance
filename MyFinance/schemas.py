@@ -86,9 +86,9 @@ class BaseFinance(BaseModel):
 class BaseFinanceList(BaseFinance):
     """ Базовый класс списков доходов и рассходов
     """
+    id: int
     category: CategoryList
     account = AccountList
-    id: int
 
 
 class IncomeList(BaseFinance):
@@ -101,3 +101,10 @@ class ExpenseList(BaseFinance):
     """ Список расходов
     """
     pass
+
+
+class CreateFinanceList(BaseFinance):
+    """ Базовый класс списков доходов и рассходов
+    """
+    category_id: int
+    account_id = int
