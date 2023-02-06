@@ -1,5 +1,5 @@
 from MyFinance.models import Expense, Income, Currency, Category, Account
-from MyFinance.schemas import CreateCategory, CreateCurrency, CreateAccount, CreateFinanceList
+from MyFinance.schemas import CreateCategory, CreateCurrency, CreateAccount, CreateFinance
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
@@ -50,7 +50,7 @@ class IncomeEntity(FinanceEntityBase):
     def get_income_sum(self, start_date: datetime = None, end_date: datetime = None):
         return self._amount_sum(Income)
 
-    def create(self, data: CreateFinanceList):
+    def create(self, data: CreateFinance):
         income = Income(**data.dict())
         return self._add(data=income)
 
@@ -65,7 +65,7 @@ class ExpenseEntity(FinanceEntityBase):
     def get_expense_sum(self, start_date: datetime = None, end_date: datetime = None):
         return self._amount_sum(Expense)
 
-    def create(self, data: CreateFinanceList):
+    def create(self, data: CreateFinance):
         expense = Expense(**data.dict())
         return self._add(data=expense)
 

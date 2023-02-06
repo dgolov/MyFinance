@@ -109,7 +109,7 @@ class ExpenseList(BaseFinance):
     pass
 
 
-class CreateFinanceList(BaseFinance):
+class CreateFinance(BaseFinance):
     """ Создание доходов и рассходов
     """
     category_id: int
