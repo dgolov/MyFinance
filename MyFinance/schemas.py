@@ -113,4 +113,4 @@ class CreateFinance(BaseFinance):
     """ Создание доходов и рассходов
     """
     category_id: int
-    account_id = int
+    account_id: int
