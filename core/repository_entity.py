@@ -12,11 +12,17 @@ class Base:
     def _all(self, obj):
         return self.db.query(obj).all()
 
-    def _first(self, obj):
-        return self.db.query(obj).first()
+    def _filter_by_id(self, obj, pk):
+        result = self.db.query(obj).filter_by(id=pk)
+        return self._first(result)
 
-    def _one(self, obj):
-        return self.db.query(obj).one()
+    @staticmethod
+    def _first(result):
+        return result.first()
+
+    @staticmethod
+    def _one(result):
+        return result.one()
 
     def _count(self, obj):
         return len(self.db.query(obj).scalars().all())
@@ -29,8 +35,12 @@ class Base:
 
 
 class FinanceEntityBase(Base):
-    def amount_sum(self, obj):
-        return self.db.query(func.sum(obj.amount).label("total")).all()
+    def filter_by_date(self, result, start_date: datetime = None, end_date: datetime = None):
+        pass
+
+    def amount_sum(self, obj, start_date: datetime = None, end_date: datetime = None):
+        result = self.db.query(func.sum(obj.amount).label("total")).all()
+        return result
 
 
 class IncomeEntity(FinanceEntityBase):
@@ -58,6 +68,9 @@ class CategoryEntity(Base):
     def create(self, data: CreateCategory):
         category = Category(**data.dict())
         return self._add(data=category)
+
+    def get_category_by_id(self, pk):
+        return self._filter_by_id(obj=Category, pk=pk)
 
 
 class AccountEntity(Base):
