@@ -53,7 +53,13 @@ class IncomeEntity(FinanceEntityBase):
 
     def create(self, data: CreateFinance):
         income = Income(**data.dict())
-        return self._add(data=income)
+        account = self._first(result=self.db.query(Account).filter_by(id=income.account_id))
+        account.amount += income.amount
+        self.db.add(income)
+        self.db.add(account)
+        self.db.commit()
+        self.db.refresh(income)
+        return income
 
     def get_income_by_id(self, pk):
         return self._filter_by_id(obj=Income, pk=pk)
@@ -68,7 +74,13 @@ class ExpenseEntity(FinanceEntityBase):
 
     def create(self, data: CreateFinance):
         expense = Expense(**data.dict())
-        return self._add(data=expense)
+        account = self._first(result=self.db.query(Account).filter_by(id=expense.account_id))
+        account.amount -= expense.amount
+        self.db.add(expense)
+        self.db.add(account)
+        self.db.commit()
+        self.db.refresh(expense)
+        return expense
 
     def get_expense_by_id(self, pk):
         return self._filter_by_id(obj=Expense, pk=pk)
