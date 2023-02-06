@@ -40,16 +40,21 @@ class BaseFinance(BaseModel):
     category_id: Category
     account_id = Account
     amount: float = Field(..., gt=0)
+
+
+class IncomeList(BaseFinance):
+    """ Список доходов
+    """
     date: datetime = Field(default_factory=datetime.now)
 
+    class Config:
+        orm_mode = True
 
-class Income(BaseFinance):
-    """ Доходы
+
+class ExpenseList(BaseFinance):
+    """ Список расходов
     """
-    pass
+    date: datetime = Field(default_factory=datetime.now)
 
-
-class Expense(BaseFinance):
-    """ Расходы
-    """
-    pass
+    class Config:
+        orm_mode = True
