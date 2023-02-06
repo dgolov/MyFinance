@@ -3,6 +3,8 @@ from pydantic import BaseModel, Field, root_validator
 
 
 class CurrencyBase(BaseModel):
+    """ Базовый класс сериализации валюты
+    """
     name: str
 
     class Config:
@@ -22,6 +24,8 @@ class CreateCurrency(CurrencyBase):
 
 
 class AccountBase(BaseModel):
+    """ Базовый класс сериализации счетов
+    """
     name: str
     updated_at: datetime
     amount: float
@@ -53,6 +57,8 @@ class CreateAccount(AccountBase):
 
 
 class CategoryBase(BaseModel):
+    """ Базовый класс сериализации категорий
+    """
     name: str
     category_type: str
 
@@ -104,7 +110,7 @@ class ExpenseList(BaseFinance):
 
 
 class CreateFinanceList(BaseFinance):
-    """ Базовый класс списков доходов и рассходов
+    """ Создание доходов и рассходов
     """
     category_id: int
     account_id = int
