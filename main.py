@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Query
-from schemas import Income, Expense
+from MyFinance.schemas import Income, Expense
 from typing import Union
 
 
