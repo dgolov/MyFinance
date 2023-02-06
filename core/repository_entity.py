@@ -77,6 +77,13 @@ class CurrencyEntity(Base):
     def get_currency_list(self):
         return self._all(Currency)
 
+    def create(self, data: CreateCurrency):
+        currency = Currency(**data.dict())
+        return self._add(data=currency)
+
+    def get_currency_by_id(self, pk):
+        return self._filter_by_id(obj=Currency, pk=pk)
+
 
 class CategoryEntity(Base):
     def get_category_list(self):
@@ -99,3 +106,10 @@ class AccountEntity(Base):
 
     def det_account_count(self):
         return self._count(Account)
+
+    def create(self, data: Account):
+        account = Expense(**data.dict())
+        return self._add(data=account)
+
+    def get_account_by_id(self, pk):
+        return self._filter_by_id(obj=Account, pk=pk)
