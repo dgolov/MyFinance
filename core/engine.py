@@ -12,3 +12,6 @@ class EngineSessionFactory:
         engine = create_engine(uri)
         self.session_factory = sessionmaker(bind=engine, autocommit=False, autoflush=False)
         self.session = scoped_session(self.session_factory)
+
+    def get_session_local(self):
+        return self.session_factory()

@@ -1,36 +1,22 @@
-from fastapi import FastAPI, Query
-from MyFinance.schemas import Income, Expense
-from typing import Union
+from fastapi import FastAPI
+from starlette.requests import Request
+from starlette.responses import Response
+from routes import routes
+from config import db_engine
 
 
 app = FastAPI()
 
 
-@app.get("/income")
-def get_income(income: str = Query(None, description="Search income"), date: Union[str] = None):
-    return income
+@app.middleware("http")
+async def db_session_middleware(request: Request, call_next):
+    response = Response("Internal server error", status_code=500)
+    try:
+        request.state.db = db_engine.get_session_local()
+        response = await call_next(request)
+    finally:
+        request.state.db.close()
+    return response
 
 
-@app.get("/income/{id}")
-def get_income_by_id(pk):
-    return {"key": pk}
-
-
-@app.post("/income", response_model=Income)
-def create_income(income: Income):
-    return income
-
-
-@app.get("/expense")
-def get_expense(expense: str = Query(None, description="Search expense"), date: Union[str] = None):
-    return expense
-
-
-@app.get("/expense/{id}")
-def get_expense_by_id(pk):
-    return {"key": pk}
-
-
-@app.post("/expense")
-def create_expense(expense: Expense):
-    return expense
+app.include_router(routes)
