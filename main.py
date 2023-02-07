@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from starlette.requests import Request
 from starlette.responses import Response
 from routes import routes
-from config import db_engine
+from config import db_engine, logger
 
 
 app = FastAPI()
@@ -20,3 +20,4 @@ async def db_session_middleware(request: Request, call_next):
 
 
 app.include_router(routes)
+logger.debug("Start application")
