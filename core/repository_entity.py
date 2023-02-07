@@ -56,8 +56,8 @@ class FinanceEntityBase(Base):
         :param end_date: Конечная дата
         :return: Ответ БД
         """
-        result = self.db.query(func.sum(obj.amount).label("total")).all()
-        return result
+        result = self._first(self.db.query(func.sum(obj.amount).label("total")))
+        return result[0]
 
 
 class IncomeEntity(FinanceEntityBase):
@@ -149,3 +149,7 @@ class AccountEntity(Base):
 
     def get_account_by_id(self, pk):
         return self._filter_by_id(obj=Account, pk=pk)
+
+    def get_account_sum(self):
+        result = self._first(self.db.query(func.sum(Account.amount).label("total")).filter_by(add_to_balance=True))
+        return result[0]
