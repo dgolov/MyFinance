@@ -52,7 +52,7 @@ class CreateAccount(AccountBase):
 
     @root_validator
     def update(cls, values):
-        values["updated_at"] = datetime.now()
+        values["updated_at"] = datetime.utcnow()
         return values
 
 
@@ -83,7 +83,7 @@ class BaseFinance(BaseModel):
     """
     title: str
     amount: float = Field(..., gt=0)
-    date: datetime = Field(default_factory=datetime.now)
+    date: datetime = Field(default_factory=datetime.utcnow())
 
     class Config:
         orm_mode = True
