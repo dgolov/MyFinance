@@ -6,6 +6,8 @@ from sqlalchemy.sql import func
 
 
 class Base:
+    """ Базовый класс обращения в БД
+    """
     def __init__(self, db: Session):
         self.db = db
 
@@ -36,15 +38,30 @@ class Base:
 
 
 class FinanceEntityBase(Base):
+    """ Базобый класс обращения к БД для доходов / расходов
+    """
     def _filter_by_date(self, result, start_date: datetime = None, end_date: datetime = None):
+        """ Фильтр доходов / расходов по датам
+        :param result: Результат запроса
+        :param start_date: Начальная дата
+        :param end_date: Конечныя дата
+        :return: Ответ БД
+        """
         pass
 
     def _amount_sum(self, obj, start_date: datetime = None, end_date: datetime = None):
+        """ Сумма расходов / доходов
+        :param obj: Модель расхода / дохода
+        :param start_date: Начальная дата
+        :param end_date: Конечная дата
+        :return: Ответ БД
+        """
         result = self.db.query(func.sum(obj.amount).label("total")).all()
         return result
 
 
 class IncomeEntity(FinanceEntityBase):
+    """Обращение к БД доходов """
     def get_income_list(self, start_date: datetime = None, end_date: datetime = None):
         return self._all(Income)
 
@@ -66,6 +83,7 @@ class IncomeEntity(FinanceEntityBase):
 
 
 class ExpenseEntity(FinanceEntityBase):
+    """Обращение к БД расходов """
     def get_expense_list(self, start_date: datetime = None, end_date: datetime = None):
         return self._all(Expense)
 
@@ -87,6 +105,7 @@ class ExpenseEntity(FinanceEntityBase):
 
 
 class CurrencyEntity(Base):
+    """Обращение к БД валют """
     def get_currency_list(self):
         return self._all(Currency)
 
@@ -99,6 +118,7 @@ class CurrencyEntity(Base):
 
 
 class CategoryEntity(Base):
+    """Обращение к БД категорий """
     def get_category_list(self):
         return self._all(Category)
 
@@ -115,6 +135,7 @@ class CategoryEntity(Base):
 
 
 class AccountEntity(Base):
+    """Обращение к БД счетов """
     def get_account_list(self):
         return self._all(Account)
 
