@@ -1,8 +1,8 @@
 from core.repository_entity import IncomeEntity, ExpenseEntity, CategoryEntity, CurrencyEntity, AccountEntity
 from core.utils import get_db
-from datetime import datetime
 from fastapi import APIRouter, Depends
 from MyFinance.schemas import CreateCategory, CreateAccount, CreateCurrency, CreateFinance
+from MyFinance.services import get_formatted_datetime, create_formatted_datetime
 from sqlalchemy.orm import Session
 from typing import Union
 
@@ -11,12 +11,10 @@ router = APIRouter()
 
 
 @router.get("/")
-def main(db: Session = Depends(get_db), start_date: Union[str] = None, end_date: Union[str] = None):
-    if not start_date:
-        start_date = datetime.today().replace(day=1)
-    if not end_date:
-        end_date = datetime.now()
-
+def main(
+        db: Session = Depends(get_db), start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
+) -> dict:
+    start_date, end_date = create_formatted_datetime(start=start_date_str, end=end_date_str)
     return {
         "account_sum": AccountEntity(db).get_account_sum(),
         "income_sum": IncomeEntity(db).get_income_sum(start_date, end_date),
@@ -25,7 +23,10 @@ def main(db: Session = Depends(get_db), start_date: Union[str] = None, end_date:
 
 
 @router.get("/income")
-def get_income_list(db: Session = Depends(get_db), start_date: Union[str] = None, end_date: Union[str] = None):
+def get_income_list(
+        db: Session = Depends(get_db), start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
+) -> list:
+    start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
     return IncomeEntity(db).get_income_list(start_date, end_date)
 
 
@@ -40,7 +41,10 @@ def create_income(data: CreateFinance, db: Session = Depends(get_db)):
 
 
 @router.get("/expense")
-def get_expense(db: Session = Depends(get_db), start_date: Union[str] = None, end_date: Union[str] = None):
+def get_expense(db: Session = Depends(
+    get_db), start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
+) -> dict:
+    start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
     return ExpenseEntity(db).get_expense_list(start_date, end_date)
 
 
