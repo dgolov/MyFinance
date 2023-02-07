@@ -3,9 +3,12 @@ from MyFinance.schemas import CreateCategory, CreateCurrency, CreateAccount, Cre
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
+from typing import Union
 
 
 class Base:
+    """ Базовый класс обращения в БД
+    """
     def __init__(self, db: Session):
         self.db = db
 
@@ -36,20 +39,45 @@ class Base:
 
 
 class FinanceEntityBase(Base):
-    def _filter_by_date(self, result, start_date: datetime = None, end_date: datetime = None):
-        pass
+    """ Базобый класс обращения к БД для доходов / расходов
+    """
+    def _filter_by_date(self, obj, start_date: Union[datetime, None], end_date: Union[datetime, None]):
+        """ Фильтр доходов / расходов по датам
+        :param obj: Модель расхода / дохода
+        :param start_date: Начальная дата
+        :param end_date: Конечныя дата
+        :return: Ответ БД
+        """
+        query = self.db.query(obj)
 
-    def _amount_sum(self, obj, start_date: datetime = None, end_date: datetime = None):
-        result = self.db.query(func.sum(obj.amount).label("total")).all()
-        return result
+        if start_date:
+            query = query.filter(obj.date >= start_date)
+        if end_date:
+            query = query.filter(obj.date <= end_date)
+
+        return query.all()
+
+    def _amount_sum(self, obj, start_date: Union[datetime, None], end_date: Union[datetime, None]):
+        """ Сумма расходов / доходов
+        :param obj: Модель расхода / дохода
+        :param start_date: Начальная дата
+        :param end_date: Конечная дата
+        :return: Ответ БД
+        """
+        result = self.db.query(func.sum(obj.amount).label("total_sum")).\
+            filter(obj.date >= start_date, obj.date <= end_date).first()
+        return result[0]
 
 
 class IncomeEntity(FinanceEntityBase):
-    def get_income_list(self, start_date: datetime = None, end_date: datetime = None):
+    """Обращение к БД доходов """
+    def get_income_list(self, start_date: Union[datetime, None], end_date: Union[datetime, None]):
+        if start_date or end_date:
+            return self._filter_by_date(Income, start_date, end_date)
         return self._all(Income)
 
-    def get_income_sum(self, start_date: datetime = None, end_date: datetime = None):
-        return self._amount_sum(Income)
+    def get_income_sum(self, start_date: datetime, end_date: datetime):
+        return self._amount_sum(Income, start_date, end_date)
 
     def create(self, data: CreateFinance):
         income = Income(**data.dict())
@@ -66,13 +94,17 @@ class IncomeEntity(FinanceEntityBase):
 
 
 class ExpenseEntity(FinanceEntityBase):
-    def get_expense_list(self, start_date: datetime = None, end_date: datetime = None):
+    """Обращение к БД расходов """
+    def get_expense_list(self, start_date: Union[datetime, None], end_date: Union[datetime, None]):
+        if start_date or end_date:
+            return self._filter_by_date(Expense, start_date, end_date)
         return self._all(Expense)
 
-    def get_expense_sum(self, start_date: datetime = None, end_date: datetime = None):
-        return self._amount_sum(Expense)
+    def get_expense_sum(self, start_date: datetime, end_date: datetime):
+        return self._amount_sum(Expense, start_date, end_date)
 
     def create(self, data: CreateFinance):
+        print(data)
         expense = Expense(**data.dict())
         account = self._first(result=self.db.query(Account).filter_by(id=expense.account_id))
         account.amount -= expense.amount
@@ -87,6 +119,7 @@ class ExpenseEntity(FinanceEntityBase):
 
 
 class CurrencyEntity(Base):
+    """Обращение к БД валют """
     def get_currency_list(self):
         return self._all(Currency)
 
@@ -99,6 +132,7 @@ class CurrencyEntity(Base):
 
 
 class CategoryEntity(Base):
+    """Обращение к БД категорий """
     def get_category_list(self):
         return self._all(Category)
 
@@ -115,6 +149,7 @@ class CategoryEntity(Base):
 
 
 class AccountEntity(Base):
+    """Обращение к БД счетов """
     def get_account_list(self):
         return self._all(Account)
 
@@ -128,3 +163,7 @@ class AccountEntity(Base):
 
     def get_account_by_id(self, pk):
         return self._filter_by_id(obj=Account, pk=pk)
+
+    def get_account_sum(self):
+        result = self._first(self.db.query(func.sum(Account.amount).label("total")).filter_by(add_to_balance=True))
+        return result[0]

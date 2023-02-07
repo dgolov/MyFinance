@@ -1,8 +1,8 @@
 from core.repository_entity import IncomeEntity, ExpenseEntity, CategoryEntity, CurrencyEntity, AccountEntity
 from core.utils import get_db
 from fastapi import APIRouter, Depends
-from MyFinance.schemas import CreateCategory, CreateAccount, CreateCurrency, CreateFinance, IncomeList, ExpenseList, \
-    CurrencyList, CategoryList, AccountList
+from MyFinance.schemas import CreateCategory, CreateAccount, CreateCurrency, CreateFinance
+from MyFinance.services import get_formatted_datetime, create_formatted_datetime
 from sqlalchemy.orm import Session
 from typing import Union
 
@@ -10,9 +10,24 @@ from typing import Union
 router = APIRouter()
 
 
+@router.get("/")
+def main(
+        db: Session = Depends(get_db), start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
+) -> dict:
+    start_date, end_date = create_formatted_datetime(start=start_date_str, end=end_date_str)
+    return {
+        "account_sum": AccountEntity(db).get_account_sum(),
+        "income_sum": IncomeEntity(db).get_income_sum(start_date, end_date),
+        "expense_sum": ExpenseEntity(db).get_expense_sum(start_date, end_date),
+    }
+
+
 @router.get("/income")
-def get_income_list(db: Session = Depends(get_db), date: Union[str] = None):
-    return IncomeEntity(db).get_income_list(date)
+def get_income_list(
+        db: Session = Depends(get_db), start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
+) -> list:
+    start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
+    return IncomeEntity(db).get_income_list(start_date, end_date)
 
 
 @router.get("/income/{id}")
@@ -26,8 +41,11 @@ def create_income(data: CreateFinance, db: Session = Depends(get_db)):
 
 
 @router.get("/expense")
-def get_expense(db: Session = Depends(get_db), date: Union[str] = None):
-    return ExpenseEntity(db).get_expense_list(date)
+def get_expense(db: Session = Depends(
+    get_db), start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
+) -> dict:
+    start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
+    return ExpenseEntity(db).get_expense_list(start_date, end_date)
 
 
 @router.get("/expense/{id}")
