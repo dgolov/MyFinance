@@ -14,6 +14,8 @@ async def db_session_middleware(request: Request, call_next):
     try:
         request.state.db = db_engine.get_session_local()
         response = await call_next(request)
+    except Exception as e:
+        logger.error(e)
     finally:
         request.state.db.close()
     return response
