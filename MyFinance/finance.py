@@ -10,6 +10,20 @@ from typing import Union
 router = APIRouter()
 
 
+@router.get("/")
+def main(db: Session = Depends(get_db), start_date: Union[str] = None, end_date: Union[str] = None):
+    if not start_date:
+        start_date = datetime.today().replace(day=1)
+    if not end_date:
+        end_date = datetime.now()
+
+    return {
+        "account_sum": AccountEntity(db).get_account_sum(),
+        "income_sum": IncomeEntity(db).get_income_sum(start_date, end_date),
+        "expense_sum": ExpenseEntity(db).get_expense_sum(start_date, end_date),
+    }
+
+
 @router.get("/income")
 def get_income_list(db: Session = Depends(get_db), start_date: Union[str] = None, end_date: Union[str] = None):
     return IncomeEntity(db).get_income_list(start_date, end_date)
