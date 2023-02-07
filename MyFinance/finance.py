@@ -1,8 +1,7 @@
 from core.repository_entity import IncomeEntity, ExpenseEntity, CategoryEntity, CurrencyEntity, AccountEntity
 from core.utils import get_db
 from fastapi import APIRouter, Depends
-from MyFinance.schemas import CreateCategory, CreateAccount, CreateCurrency, CreateFinance, IncomeList, ExpenseList, \
-    CurrencyList, CategoryList, AccountList
+from MyFinance.schemas import CreateCategory, CreateAccount, CreateCurrency, CreateFinance
 from sqlalchemy.orm import Session
 from typing import Union
 
