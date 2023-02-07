@@ -1,5 +1,6 @@
 from core.repository_entity import IncomeEntity, ExpenseEntity, CategoryEntity, CurrencyEntity, AccountEntity
 from core.utils import get_db
+from datetime import datetime
 from fastapi import APIRouter, Depends
 from MyFinance.schemas import CreateCategory, CreateAccount, CreateCurrency, CreateFinance
 from sqlalchemy.orm import Session
@@ -10,8 +11,8 @@ router = APIRouter()
 
 
 @router.get("/income")
-def get_income_list(db: Session = Depends(get_db), date: Union[str] = None):
-    return IncomeEntity(db).get_income_list(date)
+def get_income_list(db: Session = Depends(get_db), start_date: Union[str] = None, end_date: Union[str] = None):
+    return IncomeEntity(db).get_income_list(start_date, end_date)
 
 
 @router.get("/income/{id}")
@@ -25,8 +26,8 @@ def create_income(data: CreateFinance, db: Session = Depends(get_db)):
 
 
 @router.get("/expense")
-def get_expense(db: Session = Depends(get_db), date: Union[str] = None):
-    return ExpenseEntity(db).get_expense_list(date)
+def get_expense(db: Session = Depends(get_db), start_date: Union[str] = None, end_date: Union[str] = None):
+    return ExpenseEntity(db).get_expense_list(start_date, end_date)
 
 
 @router.get("/expense/{id}")
