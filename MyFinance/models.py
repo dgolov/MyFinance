@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, Float, ForeignKey, Boolean
-
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -22,6 +22,7 @@ class Account(Base):
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
     name = Column(String)
     currency_id = Column(Integer, ForeignKey('currency.id'))
+    currency = relationship("Currency", lazy="joined")
     updated_at = Column(DateTime)
     amount = Column(Float)
     add_to_balance = Column(Boolean, default=True)
@@ -45,8 +46,10 @@ class Income(Base):
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
     title = Column(String)
     category_id = Column(Integer, ForeignKey('category.id'))
+    category = relationship("Category", lazy="joined")
     amount = Column(Float)
     account_id = Column(Integer, ForeignKey('account.id'))
+    account = relationship("Account", lazy="joined")
     date = Column(DateTime)
 
 
@@ -58,6 +61,8 @@ class Expense(Base):
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
     title = Column(String)
     category_id = Column(Integer, ForeignKey('category.id'))
+    category = relationship("Category", lazy="joined")
     amount = Column(Float)
     account_id = Column(Integer, ForeignKey('account.id'))
+    account = relationship("Account", lazy="joined")
     date = Column(DateTime)
