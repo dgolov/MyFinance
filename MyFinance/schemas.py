@@ -69,7 +69,7 @@ class CategoryBase(BaseModel):
 class CategoryList(CategoryBase):
     """ Список категорий доходов и рассходов
     """
-    id: str
+    id: int
 
 
 class CreateCategory(CategoryBase):
