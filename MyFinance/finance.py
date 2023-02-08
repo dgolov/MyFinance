@@ -50,7 +50,7 @@ def create_income(data: CreateFinance, db: Session = Depends(get_db)):
 
 
 @router.get("/expense")
-def get_expense(db: Session = Depends(
+def get_expense_list(db: Session = Depends(
     get_db), start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ) -> dict:
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
