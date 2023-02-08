@@ -48,14 +48,19 @@ class FinanceEntityBase(Base):
         :param end_date: Конечныя дата
         :return: Ответ БД
         """
-        query = self.db.query(obj)
-
-        if start_date:
-            query = query.filter(obj.date >= start_date)
-        if end_date:
-            query = query.filter(obj.date <= end_date)
-
+        query = self.__get_query_with_filter_by_date(obj, start_date, end_date)
         return query.all()
+
+    def _filter_by_category_id(
+            self, obj, start_date: Union[datetime, None], end_date: Union[datetime, None], category_id: int
+    ) -> list:
+        """ Фильтр доходов / расходов по датам
+        :param obj: Модель расхода / дохода
+        :param category_id: Id категории
+        :return: Ответ БД
+        """
+        query = self.__get_query_with_filter_by_date(obj, start_date, end_date)
+        return query.filter_by(category_id=category_id).all()
 
     def _amount_sum(self, obj, start_date: Union[datetime, None], end_date: Union[datetime, None]):
         """ Сумма расходов / доходов
@@ -67,6 +72,22 @@ class FinanceEntityBase(Base):
         result = self.db.query(func.sum(obj.amount).label("total_sum")).\
             filter(obj.date >= start_date, obj.date <= end_date).first()
         return result[0]
+
+    def __get_query_with_filter_by_date(self, obj, start_date: Union[datetime, None], end_date: Union[datetime, None]):
+        """ Добавление фильтра по датам в запрос
+        :param obj: Модель расхода / дохода
+        :param start_date: Начальная дата
+        :param end_date: Конечныя дата
+        :return: SQL запрос
+        """
+        query = self.db.query(obj)
+
+        if start_date:
+            query = query.filter(obj.date >= start_date)
+        if end_date:
+            query = query.filter(obj.date <= end_date)
+
+        return query
 
 
 class IncomeEntity(FinanceEntityBase):
@@ -92,6 +113,13 @@ class IncomeEntity(FinanceEntityBase):
     def get_income_by_id(self, pk):
         return self._filter_by_id(obj=Income, pk=pk)
 
+    def get_income_list_by_category(
+            self, category_id: int, start_date: Union[datetime, None], end_date: Union[datetime, None]
+    ) -> list:
+        return self._filter_by_category_id(
+            obj=Income, start_date=start_date, end_date=end_date, category_id=category_id
+        )
+
 
 class ExpenseEntity(FinanceEntityBase):
     """Обращение к БД расходов """
@@ -116,6 +144,13 @@ class ExpenseEntity(FinanceEntityBase):
 
     def get_expense_by_id(self, pk):
         return self._filter_by_id(obj=Expense, pk=pk)
+
+    def get_expense_list_by_category(
+            self, category_id: int, start_date: Union[datetime, None], end_date: Union[datetime, None]
+    ) -> list:
+        return self._filter_by_category_id(
+            obj=Expense, start_date=start_date, end_date=end_date, category_id=category_id
+        )
 
 
 class CurrencyEntity(Base):

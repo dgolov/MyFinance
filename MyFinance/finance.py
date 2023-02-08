@@ -35,13 +35,22 @@ def get_income_by_id(pk, db: Session = Depends(get_db)):
     return IncomeEntity(db).get_income_by_id(pk)
 
 
+@router.get("/income/category/{id}")
+def get_income_by_category_id(
+        pk, db: Session = Depends(get_db),
+        start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
+):
+    start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
+    return IncomeEntity(db).get_income_list_by_category(pk, start_date, end_date)
+
+
 @router.post("/income")
 def create_income(data: CreateFinance, db: Session = Depends(get_db)):
     return IncomeEntity(db).create(data)
 
 
 @router.get("/expense")
-def get_expense(db: Session = Depends(
+def get_expense_list(db: Session = Depends(
     get_db), start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ) -> dict:
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
@@ -51,6 +60,15 @@ def get_expense(db: Session = Depends(
 @router.get("/expense/{id}")
 def get_expense_by_id(pk, db: Session = Depends(get_db)):
     return ExpenseEntity(db).get_expense_by_id(pk)
+
+
+@router.get("/expense/category/{id}")
+def get_expense_by_category_id(
+        pk, db: Session = Depends(get_db),
+        start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
+):
+    start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
+    return ExpenseEntity(db).get_expense_list_by_category(pk, start_date, end_date)
 
 
 @router.post("/expense")
