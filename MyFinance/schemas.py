@@ -94,16 +94,16 @@ class BaseFinanceList(BaseFinance):
     """
     id: int
     category: CategoryList
-    account = AccountList
+    account: AccountList
 
 
-class IncomeList(BaseFinance):
+class IncomeList(BaseFinanceList):
     """ Список доходов
     """
     pass
 
 
-class ExpenseList(BaseFinance):
+class ExpenseList(BaseFinanceList):
     """ Список расходов
     """
     pass
