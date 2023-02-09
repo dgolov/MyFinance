@@ -200,5 +200,7 @@ class AccountEntity(Base):
         return self._filter_by_id(obj=Account, pk=pk)
 
     def get_account_sum(self):
-        result = self._first(self.db.query(func.sum(Account.amount).label("total")).filter_by(add_to_balance=True))
-        return result[0]
+        return self.db.query(Currency.name, func.sum(Account.amount).label("total")).\
+            join(Account.currency).\
+            filter(Account.add_to_balance).\
+            group_by(Currency.name)

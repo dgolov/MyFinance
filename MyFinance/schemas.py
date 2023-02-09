@@ -11,7 +11,7 @@ class CurrencyBase(BaseModel):
         orm_mode = True
 
 
-class CurrencyList(CurrencyBase):
+class CurrencySchema(CurrencyBase):
     """ Список валют (рубли, доллары, евро и тд)
     """
     id: int
@@ -35,11 +35,11 @@ class AccountBase(BaseModel):
         orm_mode = True
 
 
-class AccountList(AccountBase):
+class AccountSchema(AccountBase):
     """ Список счетов
     """
     id: int
-    currency: CurrencyList
+    currency: CurrencySchema
 
 
 class CreateAccount(AccountBase):
@@ -66,10 +66,10 @@ class CategoryBase(BaseModel):
         orm_mode = True
 
 
-class CategoryList(CategoryBase):
+class CategorySchema(CategoryBase):
     """ Список категорий доходов и рассходов
     """
-    id: str
+    id: int
 
 
 class CreateCategory(CategoryBase):
@@ -89,21 +89,21 @@ class BaseFinance(BaseModel):
         orm_mode = True
 
 
-class BaseFinanceList(BaseFinance):
+class BaseFinanceSchema(BaseFinance):
     """ Базовый класс списков доходов и рассходов
     """
     id: int
-    category: CategoryList
-    account = AccountList
+    category: CategorySchema
+    account: AccountSchema
 
 
-class IncomeList(BaseFinance):
+class IncomeSchema(BaseFinanceSchema):
     """ Список доходов
     """
     pass
 
 
-class ExpenseList(BaseFinance):
+class ExpenseSchema(BaseFinanceSchema):
     """ Список расходов
     """
     pass
