@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 def create_formatted_datetime(start: str, end: str) -> tuple:
