@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 
@@ -11,3 +12,6 @@ class EngineSessionFactory:
 
     def get_session_local(self):
         return self.session_factory()
+
+
+Base = declarative_base()
