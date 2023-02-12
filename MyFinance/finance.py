@@ -1,13 +1,12 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+import asyncio
 
+from sqlalchemy.ext.asyncio import AsyncSession
 from core.engine import get_async_session
 from core.repository_entity import IncomeEntity, ExpenseEntity, CategoryEntity, CurrencyEntity, AccountEntity
-from core.utils import get_db
 from fastapi import APIRouter, Depends
 from MyFinance.schemas import CreateCategory, CreateAccount, CreateCurrency, CreateFinance, AccountSchema, \
     IncomeSchema, ExpenseSchema, CurrencySchema, CategorySchema
-from MyFinance.services import get_formatted_datetime, create_formatted_datetime
-from sqlalchemy.orm import Session
+from MyFinance.services import get_formatted_datetime
 from typing import Union, List
 
 
@@ -19,13 +18,16 @@ async def main(
         session: AsyncSession = Depends(get_async_session),
         start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ) -> dict:
-    print(1234)
+    account_sum, income, expense = await asyncio.gather(
+        AccountEntity(session).get_account_sum(),
+        get_income_list(session, start_date_str, end_date_str),
+        get_expense_list(session, start_date_str, end_date_str)
+    )
     res = {
-        "account_sum": await AccountEntity(session).get_account_sum(),
-        "income_sum": await get_income_list(session, start_date_str, end_date_str),
-        "expense_sum": await get_expense_list(session, start_date_str, end_date_str),
+        "account_sum": account_sum,
+        "income": income,
+        "expense_sum": expense,
     }
-    print(res)
     return res
 
 
