@@ -168,7 +168,8 @@ class CurrencyEntity(Base):
         return await self._add(obj=Currency, data=data)
 
     async def get_currency_by_id(self, pk):
-        return await self._filter_by_id(obj=Currency, pk=pk)
+        result = await self._filter_by_id(obj=Currency, pk=pk)
+        return result[0]
 
 
 class CategoryEntity(Base):
@@ -184,7 +185,8 @@ class CategoryEntity(Base):
         return await self._add(obj=Category, data=data)
 
     async def get_category_by_id(self, pk):
-        return await self._filter_by_id(obj=Category, pk=pk)
+        result = await self._filter_by_id(obj=Category, pk=pk)
+        return result[0]
 
 
 class AccountEntity(Base):
@@ -200,7 +202,8 @@ class AccountEntity(Base):
         return await self._add(obj=Account, data=data)
 
     async def get_account_by_id(self, pk):
-        return await self._filter_by_id(obj=Account, pk=pk)
+        result = await self._filter_by_id(obj=Account, pk=pk)
+        return result[0]
 
     async def get_account_sum(self):
         query = select(Currency.name, func.sum(Account.amount).label("total")).\
