@@ -1,5 +1,5 @@
 from config import SQLALCHEMY_DATABASE_URL
-from core.engine import Base
+from core.engine import Base, get_async_session
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from sqlalchemy import Column, String, Integer, DateTime, Float, ForeignKey, Boolean
@@ -17,15 +17,6 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_active: bool = Column(Boolean, default=True, nullable=False)
     is_superuser: bool = Column(Boolean, default=False, nullable=False)
     is_verified: bool = Column(Boolean, default=False, nullable=False)
-
-
-engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
-async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-
-
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
