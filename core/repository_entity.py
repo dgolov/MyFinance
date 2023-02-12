@@ -17,7 +17,6 @@ class Base:
         result = await self.session.execute(query)
         row = result.all()
         return [data[0] for data in row]
-        # return self.db.query(obj).all()
 
     async def _filter_by_id(self, obj, pk: int):
         query = select(obj).filter(obj.id == int(pk))
@@ -88,13 +87,13 @@ class FinanceEntityBase(Base):
         :return: SQL запрос
         """
         query = select(obj)
+        if start_date:
+            query = query.filter(obj.date >= start_date)
+        if end_date:
+            query = query.filter(obj.date <= end_date)
+
         result = await self.session.execute(query)
         row = result.all()
-
-        if start_date:
-            row = row.filter(obj.date >= start_date)
-        if end_date:
-            row = row.filter(obj.date <= end_date)
 
         return [data[0] for data in row]
 
@@ -103,7 +102,7 @@ class IncomeEntity(FinanceEntityBase):
     """Обращение к БД доходов """
     async def get_income_list(self, start_date: Union[datetime, None], end_date: Union[datetime, None]):
         if start_date or end_date:
-            return self._filter_by_date(Income, start_date, end_date)
+            return await self._filter_by_date(Income, start_date, end_date)
         return await self._all(Income)
 
     async def get_income_sum(self, start_date: datetime, end_date: datetime):
@@ -133,7 +132,7 @@ class ExpenseEntity(FinanceEntityBase):
     """ Обращение к БД расходов """
     async def get_expense_list(self, start_date: Union[datetime, None], end_date: Union[datetime, None]):
         if start_date or end_date:
-            return self._filter_by_date(Expense, start_date, end_date)
+            return await self._filter_by_date(Expense, start_date, end_date)
         return await self._all(Expense)
 
     async def get_expense_sum(self, start_date: datetime, end_date: datetime):
