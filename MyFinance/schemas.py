@@ -27,7 +27,6 @@ class AccountBase(BaseModel):
     """ Базовый класс сериализации счетов
     """
     name: str
-    updated_at: datetime
     amount: float
     add_to_balance: bool = True
 
@@ -39,6 +38,7 @@ class AccountSchema(AccountBase):
     """ Список счетов
     """
     id: int
+    updated_at: datetime
     currency: CurrencySchema
 
 
