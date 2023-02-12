@@ -23,12 +23,11 @@ async def main(
         get_income_list(session, start_date_str, end_date_str),
         get_expense_list(session, start_date_str, end_date_str)
     )
-    res = {
+    return {
         "account_sum": account_sum,
         "income": income,
         "expense_sum": expense,
     }
-    return res
 
 
 @router.get("/income", response_model=List[IncomeSchema])
@@ -38,7 +37,6 @@ async def get_income_list(
 ) -> list:
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
     response = await IncomeEntity(session).get_income_list(start_date, end_date)
-    print(response)
     return response
 
 
