@@ -83,7 +83,6 @@ class BaseFinance(BaseModel):
     """
     title: str
     amount: float = Field(..., gt=0)
-    date: datetime = Field(default_factory=datetime.utcnow())
 
     class Config:
         orm_mode = True
@@ -95,6 +94,7 @@ class BaseFinanceSchema(BaseFinance):
     id: int
     category: CategorySchema
     account: AccountSchema
+    date: datetime
 
 
 class IncomeSchema(BaseFinanceSchema):
