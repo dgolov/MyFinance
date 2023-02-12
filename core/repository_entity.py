@@ -37,7 +37,7 @@ class Base:
         return len(result)
 
     async def _add(self, obj, data):
-        query = insert(obj).values(**data)
+        query = insert(obj).values(**data.dict())
         await self.session.execute(query)
         await self.session.commit()
         return {"status": "success"}
@@ -78,7 +78,9 @@ class FinanceEntityBase(Base):
         row = result.first()
         return row[0]
 
-    async def __get_query_with_filter_by_date(self, obj, start_date: Union[datetime, None], end_date: Union[datetime, None]):
+    async def __get_query_with_filter_by_date(
+            self, obj, start_date: Union[datetime, None], end_date: Union[datetime, None]
+    ):
         """ Добавление фильтра по датам в запрос
         :param obj: Модель расхода / дохода
         :param start_date: Начальная дата
@@ -108,12 +110,12 @@ class IncomeEntity(FinanceEntityBase):
         return await self._amount_sum(Income, start_date, end_date)
 
     async def create(self, data: CreateFinance):
-        expense = Expense(**data.dict())
-        query = select(Income).filter_by(id=expense.account_id)
+        income = Income(**data.dict())
+        query = select(Income).filter(Income.id == income.account_id)
         result = await self.session.execute(query)
         account = self._first(result=result)
-        account.amount += expense.amount
-        return await self._add(obj=Expense, data=data)
+        account[0].amount += income.amount
+        return await self._add(obj=Income, data=data)
 
     async def get_income_by_id(self, pk):
         result = await self._filter_by_id(obj=Income, pk=pk)
@@ -139,11 +141,11 @@ class ExpenseEntity(FinanceEntityBase):
 
     async def create(self, data: CreateFinance):
         expense = Expense(**data.dict())
-        query = select(Account).filter_by(id=expense.account_id)
+        query = select(Income).filter(Expense.id == expense.account_id)
         result = await self.session.execute(query)
         account = self._first(result=result)
-        account.amount -= expense.amount
-        return self._add(obj=Expense, data=data)
+        account[0].amount += expense.amount
+        return await self._add(obj=Expense, data=data)
 
     async def get_expense_by_id(self, pk):
         return await self._filter_by_id(obj=Expense, pk=pk)
