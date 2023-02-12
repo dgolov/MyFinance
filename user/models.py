@@ -1,11 +1,8 @@
-from config import SQLALCHEMY_DATABASE_URL
 from core.engine import Base, get_async_session
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
-from sqlalchemy import Column, String, Integer, DateTime, Float, ForeignKey, Boolean
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import DeclarativeMeta, declarative_base, sessionmaker
-from typing import AsyncGenerator
+from sqlalchemy import Column, String, Integer, Boolean
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
