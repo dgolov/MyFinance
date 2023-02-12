@@ -60,7 +60,10 @@ def create_income(data: CreateFinance, session: AsyncSession = Depends(get_async
 
 
 @router.get("/expense", response_model=List[ExpenseSchema])
-async def get_expense_list(session: AsyncSession = Depends(get_async_session), start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None) -> dict:
+async def get_expense_list(
+        session: AsyncSession = Depends(get_async_session),
+        start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
+) -> dict:
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
     return await ExpenseEntity(session).get_expense_list(start_date, end_date)
 
