@@ -130,7 +130,7 @@ class IncomeEntity(FinanceEntityBase):
 
 
 class ExpenseEntity(FinanceEntityBase):
-    """Обращение к БД расходов """
+    """ Обращение к БД расходов """
     async def get_expense_list(self, start_date: Union[datetime, None], end_date: Union[datetime, None]):
         if start_date or end_date:
             return self._filter_by_date(Expense, start_date, end_date)
@@ -148,7 +148,8 @@ class ExpenseEntity(FinanceEntityBase):
         return await self._add(obj=Expense, data=data)
 
     async def get_expense_by_id(self, pk):
-        return await self._filter_by_id(obj=Expense, pk=pk)
+        result = await self._filter_by_id(obj=Expense, pk=pk)
+        return result[0]
 
     async def get_expense_list_by_category(
             self, category_id: int, start_date: Union[datetime, None], end_date: Union[datetime, None]
