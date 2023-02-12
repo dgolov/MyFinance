@@ -4,7 +4,7 @@ from MyFinance import finance
 from user.models import User
 from user.auth import auth_backend
 from user.manager import get_user_manager
-
+from user.schemas import UserRead, UserCreate
 
 routes = APIRouter()
 
@@ -19,5 +19,11 @@ fastapi_users = FastAPIUsers[User, int](
 routes.include_router(
     fastapi_users.get_auth_router(auth_backend, requires_verification=True),
     prefix="/auth/jwt",
+    tags=["auth"],
+)
+
+routes.include_router(
+    fastapi_users.get_register_router(UserRead, UserCreate),
+    prefix="/auth",
     tags=["auth"],
 )
