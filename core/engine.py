@@ -1,13 +1,18 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from config import SQLALCHEMY_DATABASE_URL
+from typing import AsyncGenerator
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 
 
-class EngineSessionFactory:
-    """ Класс для обработки сессии SQLAlchemy. """
-    def __init__(self, uri):
-        engine = create_engine(uri)
-        self.session_factory = sessionmaker(bind=engine, autocommit=False, autoflush=False)
-        self.session = scoped_session(self.session_factory)
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL, poolclass=NullPool)
+async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
-    def get_session_local(self):
-        return self.session_factory()
+
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session_maker() as session:
+        yield session
+
+
+Base = declarative_base()

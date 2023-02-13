@@ -27,7 +27,6 @@ class AccountBase(BaseModel):
     """ Базовый класс сериализации счетов
     """
     name: str
-    updated_at: datetime
     amount: float
     add_to_balance: bool = True
 
@@ -39,6 +38,7 @@ class AccountSchema(AccountBase):
     """ Список счетов
     """
     id: int
+    updated_at: datetime
     currency: CurrencySchema
 
 
@@ -83,7 +83,6 @@ class BaseFinance(BaseModel):
     """
     title: str
     amount: float = Field(..., gt=0)
-    date: datetime = Field(default_factory=datetime.utcnow())
 
     class Config:
         orm_mode = True
@@ -95,6 +94,7 @@ class BaseFinanceSchema(BaseFinance):
     id: int
     category: CategorySchema
     account: AccountSchema
+    date: datetime
 
 
 class IncomeSchema(BaseFinanceSchema):

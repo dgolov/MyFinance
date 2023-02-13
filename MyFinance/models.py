@@ -1,8 +1,7 @@
-from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-
-Base = declarative_base()
+from core.engine import Base
 
 
 class Currency(Base):
@@ -50,7 +49,7 @@ class Income(Base):
     amount = Column(Float)
     account_id = Column(Integer, ForeignKey('account.id'))
     account = relationship("Account", lazy="joined")
-    date = Column(DateTime)
+    date = Column(DateTime, default=datetime.utcnow())
 
 
 class Expense(Base):
@@ -65,4 +64,4 @@ class Expense(Base):
     amount = Column(Float)
     account_id = Column(Integer, ForeignKey('account.id'))
     account = relationship("Account", lazy="joined")
-    date = Column(DateTime)
+    date = Column(DateTime, default=datetime.utcnow())
