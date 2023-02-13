@@ -2,7 +2,6 @@ import os
 import logging.config
 
 from dotenv import load_dotenv
-from core.engine import EngineSessionFactory
 
 
 load_dotenv()
@@ -43,4 +42,6 @@ logger_mode = 'console' if int(os.environ.get('DEBUG', True)) else 'log'
 logger = logging.getLogger(logger_mode)
 
 SQLALCHEMY_DATABASE_URL = os.environ.get('DB_URL')
-db_engine = EngineSessionFactory(SQLALCHEMY_DATABASE_URL)
+
+
+SECRET = os.environ.get('SECRET')
