@@ -107,6 +107,14 @@ async def create_expense(
     return await ExpenseEntity(session).create(data, user.id)
 
 
+@router.patch("/expense/{id}")
+async def update_item(
+        pk: int, data: CreateFinance, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await ExpenseEntity(session).update(pk, data, user.id)
+
+
 @router.get("/category", response_model=List[CategorySchema])
 async def get_category_list(
         user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)

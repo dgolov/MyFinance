@@ -192,6 +192,15 @@ class ExpenseEntity(FinanceEntityBase):
         account.amount += expense.amount
         return await self._add(obj=Expense, user_id=user_id, data=data)
 
+    async def update(self, pk: int, data: CreateFinance, user_id: int):
+        expense = await self.session.get(Expense, pk)
+        if not expense or expense.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Income is not found"
+            }
+        return self._update(expense, data)
+
     async def get_expense_by_id(self, pk: int, user_id: int):
         query = select(Expense).filter(Income.user_id == user_id).filter(Expense.id == int(pk))
         result = await self.session.execute(query)
