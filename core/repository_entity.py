@@ -198,23 +198,26 @@ class CurrencyEntity(Base):
 
 class CategoryEntity(Base):
     """Обращение к БД категорий """
-    async def get_category_list(self, user_id):
-        query = select(Category).filter(Category.user_id == user_id)
+    async def get_category_list(self, user_id: int):
+        query = select(Category).filter(Category.user_id == user_id or Currency.user_id == None)
         query_result = await self.session.execute(query)
         return await self._all(query_result)
 
-    async def det_category_count(self, user_id):
-        query = select(Category).filter(Category.user_id == user_id)
+    async def det_category_count(self, user_id: int):
+        query = select(Category).filter(Category.user_id == user_id or Currency.user_id == None)
         query_result = await self.session.execute(query)
         result = await self._all(query_result)
         return self._count(result)
 
-    async def create(self, data: CreateCategory):
-        return await self._add(obj=Category, data=data)
+    async def create(self, user_id: int, data: CreateCategory):
+        return await self._add(obj=Category, user_id=user_id, data=data)
 
-    async def get_category_by_id(self, pk):
-        result = await self._filter_by_id(obj=Category, pk=pk)
-        return result[0]
+    async def get_category_by_id(self, pk: int, user_id: int):
+        query = select(Category).\
+            filter(Category.user_id == user_id or Currency.user_id == None).\
+            filter(Category.id == int(pk))
+        result = await self.session.execute(query)
+        return self._first(result)
 
 
 class AccountEntity(Base):

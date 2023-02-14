@@ -103,21 +103,21 @@ async def create_expense(
 async def get_category_list(
         user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ) -> list:
-    return await CategoryEntity(session).get_category_list()
+    return await CategoryEntity(session).get_category_list(user.id)
 
 
-@router.get("/category/{id}", response_model=CategorySchema)
+@router.get("/category/{id}", response_model=Union[CategorySchema, None])
 async def get_category_by_id(
         pk: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await CategoryEntity(session).get_category_by_id(pk)
+    return await CategoryEntity(session).get_category_by_id(pk, user.id)
 
 
 @router.post("/category")
 async def create_category(
         data: CreateCategory, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await CategoryEntity(session).create(data)
+    return await CategoryEntity(session).create(user.id, data)
 
 
 @router.get("/currency", response_model=List[CurrencySchema])
