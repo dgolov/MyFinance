@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from MyFinance import finance
 from users.auth import auth_backend
-from users.schemas import UserRead, UserCreate
+from users.schemas import UserRead, UserCreate, UserUpdate
 from users.utils import fastapi_users
 
 routes = APIRouter()
@@ -35,4 +35,10 @@ routes.include_router(
     fastapi_users.get_reset_password_router(),
     prefix="/auth",
     tags=["auth"],
+)
+
+routes.include_router(
+    fastapi_users.get_users_router(UserRead, UserUpdate, requires_verification=True),
+    prefix="/users",
+    tags=["users"],
 )
