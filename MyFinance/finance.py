@@ -66,6 +66,14 @@ async def create_income(
     return await IncomeEntity(session).create(data, user.id)
 
 
+@router.patch("/income/{id}")
+async def update_item(
+        pk: int, data: CreateFinance, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await IncomeEntity(session).update(pk, data, user.id)
+
+
 @router.get("/expense", response_model=List[ExpenseSchema])
 async def get_expense_list(
         user: User = Depends(current_user),

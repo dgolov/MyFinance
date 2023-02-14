@@ -39,7 +39,17 @@ class Base:
         query = insert(obj).values(**data)
         await self.session.execute(query)
         await self.session.commit()
-        return {"status": "success"}
+        return {
+            "status": "success"
+        }
+
+    async def _update(self, obj, data):
+        for field, value in data.dict().items():
+            setattr(obj, field, value)
+        await self.session.commit()
+        return {
+            "status": "success"
+        }
 
 
 class FinanceEntityBase(Base):
@@ -129,6 +139,15 @@ class IncomeEntity(FinanceEntityBase):
         account = self._first(result=result)
         account[0].amount += income.amount
         return await self._add(obj=Income, user_id=user_id, data=data)
+
+    async def update(self, pk: int, data: CreateFinance, user_id: int):
+        income = await self.session.get(Income, pk)
+        if not income or income.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Income is not found"
+            }
+        return self._update(income, data)
 
     async def get_income_by_id(self, pk: int, user_id: int):
         query = select(Income).filter(Income.user_id == user_id).filter(Income.id == int(pk))
