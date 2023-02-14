@@ -6,7 +6,11 @@ from users.utils import fastapi_users
 
 routes = APIRouter()
 
-routes.include_router(finance.router, prefix="/finance")
+routes.include_router(
+    finance.router,
+    prefix="/finance",
+    tags=["finance"]
+)
 
 
 routes.include_router(
