@@ -125,11 +125,11 @@ async def get_currency_list(user: User = Depends(current_user), session: AsyncSe
     return await CurrencyEntity(session).get_currency_list(user.id)
 
 
-@router.get("/currency/{id}", response_model=CurrencySchema)
+@router.get("/currency/{id}", response_model=Union[CurrencySchema, None])
 async def get_currency_by_id(
         pk: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await CurrencyEntity(session).get_currency_by_id(pk)
+    return await CurrencyEntity(session).get_currency_by_id(pk, user.id)
 
 
 @router.post("/currency")
@@ -146,11 +146,11 @@ async def get_account_list(
     return await AccountEntity(session).get_account_list()
 
 
-@router.get("/account/{id}", response_model=AccountSchema)
+@router.get("/account/{id}", response_model=Union[AccountSchema, None])
 async def get_account_by_id(
         pk: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await AccountEntity(session).get_account_by_id(pk)
+    return await AccountEntity(session).get_account_by_id(pk, user.id)
 
 
 @router.post("/account")
