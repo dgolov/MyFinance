@@ -20,7 +20,7 @@ class CurrencySchema(CurrencyBase):
 class CreateCurrency(CurrencyBase):
     """ Создане валют (рубли, доллары, евро и тд)
     """
-    pass
+    user_id: int
 
 
 class AccountBase(BaseModel):
@@ -46,6 +46,7 @@ class CreateAccount(AccountBase):
     """ Создание счета
     """
     currency_id: int
+    user_id: int
 
     class Config:
         validate_assignment = True
@@ -75,7 +76,7 @@ class CategorySchema(CategoryBase):
 class CreateCategory(CategoryBase):
     """ Создание категорий доходов и рассходов
     """
-    pass
+    user_id: int
 
 
 class BaseFinance(BaseModel):
@@ -114,3 +115,4 @@ class CreateFinance(BaseFinance):
     """
     category_id: int
     account_id: int
+    user_id: int
