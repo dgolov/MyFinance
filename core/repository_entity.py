@@ -134,10 +134,15 @@ class IncomeEntity(FinanceEntityBase):
 
     async def create(self, data: CreateFinance, user_id: int):
         income = Income(**data.dict())
-        query = select(Income).filter(Income.id == income.account_id)
+        query = select(Account).filter(Account.id == income.account_id).filter(Account.user_id == user_id)
         result = await self.session.execute(query)
         account = self._first(result=result)
-        account[0].amount += income.amount
+        if not account:
+            return {
+                "status": "fail",
+                "message": "Account is not found"
+            }
+        account.amount += income.amount
         return await self._add(obj=Income, user_id=user_id, data=data)
 
     async def update(self, pk: int, data: CreateFinance, user_id: int):
