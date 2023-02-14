@@ -178,7 +178,7 @@ class ExpenseEntity(FinanceEntityBase):
 
 class CurrencyEntity(Base):
     """Обращение к БД валют """
-    async def get_currency_list(self, user_id):
+    async def get_currency_list(self, user_id: int):
         query = select(Currency).filter(Currency.user_id == user_id or Currency.user_id == None)
         query_result = await self.session.execute(query)
         return await self._all(query_result)
@@ -186,7 +186,7 @@ class CurrencyEntity(Base):
     async def create(self, user_id: int, data: CreateCurrency):
         return await self._add(obj=Currency, user_id=user_id, data=data)
 
-    async def get_currency_by_id(self, pk, user_id):
+    async def get_currency_by_id(self, pk: int, user_id: int):
         query = select(Currency).filter(Currency.user_id == user_id).filter(Currency.id == int(pk))
         result = await self.session.execute(query)
         return self._first(result)
@@ -218,12 +218,12 @@ class CategoryEntity(Base):
 
 class AccountEntity(Base):
     """Обращение к БД счетов """
-    async def get_account_list(self, user_id):
+    async def get_account_list(self, user_id: int):
         query = select(Account).filter(Account.user_id == user_id)
         query_result = await self.session.execute(query)
         return await self._all(query_result)
 
-    async def det_account_count(self, user_id):
+    async def det_account_count(self, user_id: int):
         query = select(Account).filter(Account.user_id == user_id)
         query_result = await self.session.execute(query)
         result = self._all(query_result)
