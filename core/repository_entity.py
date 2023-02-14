@@ -229,8 +229,8 @@ class AccountEntity(Base):
         result = self._all(query_result)
         return await self._count(result)
 
-    async def create(self, data: CreateAccount):
-        return await self._add(obj=Account, data=data)
+    async def create(self, data: CreateAccount, user_id: int):
+        return await self._add(obj=Account, user_id=user_id, data=data)
 
     async def get_account_by_id(self, pk: int, user_id: int):
         query = select(Account).filter(Account.user_id == user_id).filter(Account.id == int(pk))

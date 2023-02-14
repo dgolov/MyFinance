@@ -143,7 +143,7 @@ async def create_currency(
 async def get_account_list(
         user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ) -> list:
-    return await AccountEntity(session).get_account_list()
+    return await AccountEntity(session).get_account_list(user.id)
 
 
 @router.get("/account/{id}", response_model=Union[AccountSchema, None])
@@ -157,4 +157,4 @@ async def get_account_by_id(
 async def create_account(
         data: CreateAccount, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await AccountEntity(session).create(data)
+    return await AccountEntity(session).create(data, user.id)
