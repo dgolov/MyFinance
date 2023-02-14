@@ -35,8 +35,10 @@ class Base:
     def _count(result):
         return len(result)
 
-    async def _add(self, obj, data):
-        query = insert(obj).values(**data.dict())
+    async def _add(self, obj, user_id, data):
+        data = data.dict()
+        data["user_id"] = user_id
+        query = insert(obj).values(**data)
         await self.session.execute(query)
         await self.session.commit()
         return {"status": "success"}
@@ -163,11 +165,11 @@ class ExpenseEntity(FinanceEntityBase):
 
 class CurrencyEntity(Base):
     """Обращение к БД валют """
-    async def get_currency_list(self):
-        return await self._all(Currency)
+    async def get_currency_list(self, user_id):
+        return await self._all(Currency, user_id)
 
-    async def create(self, data: CreateCurrency):
-        return await self._add(obj=Currency, data=data)
+    async def create(self, user_id: int, data: CreateCurrency):
+        return await self._add(obj=Currency, user_id=user_id, data=data)
 
     async def get_currency_by_id(self, pk):
         result = await self._filter_by_id(obj=Currency, pk=pk)

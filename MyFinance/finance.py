@@ -122,7 +122,7 @@ async def create_category(
 
 @router.get("/currency", response_model=List[CurrencySchema])
 async def get_currency_list(user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
-    return await CurrencyEntity(session).get_currency_list()
+    return await CurrencyEntity(session).get_currency_list(user.id)
 
 
 @router.get("/currency/{id}", response_model=CurrencySchema)
@@ -136,7 +136,7 @@ async def get_currency_by_id(
 async def create_currency(
         data: CreateCurrency, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await CurrencyEntity(session).create(data)
+    return await CurrencyEntity(session).create(user.id, data)
 
 
 @router.get("/account", response_model=List[AccountSchema])
