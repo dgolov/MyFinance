@@ -43,11 +43,11 @@ async def get_income_list(
     return await IncomeEntity(session).get_income_list(user.id, start_date, end_date)
 
 
-@router.get("/income/{id}", response_model=IncomeSchema)
+@router.get("/income/{id}", response_model=Union[IncomeSchema, None])
 async def get_income_by_id(
         pk: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await IncomeEntity(session).get_income_by_id(pk)
+    return await IncomeEntity(session).get_income_by_id(pk, user.id)
 
 
 @router.get("/income/category/{id}", response_model=List[IncomeSchema])
@@ -56,14 +56,14 @@ async def get_income_by_category_id(
         start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ) -> list:
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
-    return await IncomeEntity(session).get_income_list_by_category(pk, start_date, end_date)
+    return await IncomeEntity(session).get_income_list_by_category(pk, user.id, start_date, end_date)
 
 
 @router.post("/income")
 async def create_income(
         data: CreateFinance, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await IncomeEntity(session).create(data)
+    return await IncomeEntity(session).create(data, user.id)
 
 
 @router.get("/expense", response_model=List[ExpenseSchema])
@@ -76,11 +76,11 @@ async def get_expense_list(
     return await ExpenseEntity(session).get_expense_list(user.id, start_date, end_date)
 
 
-@router.get("/expense/{id}", response_model=ExpenseSchema)
+@router.get("/expense/{id}", response_model=Union[ExpenseSchema, None])
 async def get_expense_by_id(
         pk: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await ExpenseEntity(session).get_expense_by_id(pk)
+    return await ExpenseEntity(session).get_expense_by_id(pk, user.id)
 
 
 @router.get("/expense/category/{id}", response_model=List[ExpenseSchema])
@@ -89,14 +89,14 @@ async def get_expense_by_category_id(
         start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ):
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
-    return await ExpenseEntity(session).get_expense_list_by_category(pk, start_date, end_date)
+    return await ExpenseEntity(session).get_expense_list_by_category(pk, user.id, start_date, end_date)
 
 
 @router.post("/expense")
 async def create_expense(
         data: CreateFinance, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await ExpenseEntity(session).create(data)
+    return await ExpenseEntity(session).create(data, user.id)
 
 
 @router.get("/category", response_model=List[CategorySchema])
