@@ -12,8 +12,8 @@ class Base:
     def __init__(self, session):
         self.session = session
 
-    async def _all(self, obj):
-        query = select(obj)
+    async def _all(self, obj, user_id: int):
+        query = select(obj).filter(obj.user_id == user_id)
         result = await self.session.execute(query)
         row = result.all()
         return [data[0] for data in row]
@@ -45,14 +45,16 @@ class Base:
 class FinanceEntityBase(Base):
     """ Базобый класс обращения к БД для доходов / расходов
     """
-    async def _filter_by_date(self, obj, start_date: Union[datetime, None], end_date: Union[datetime, None]):
+    async def _filter_by_date(
+            self, obj, user_id: int, start_date: Union[datetime, None], end_date: Union[datetime, None]
+    ):
         """ Фильтр доходов / расходов по датам
         :param obj: Модель расхода / дохода
         :param start_date: Начальная дата
         :param end_date: Конечныя дата
         :return: Ответ БД
         """
-        return await self.__get_query_with_filter_by_date(obj, start_date, end_date)
+        return await self.__get_query_with_filter_by_date(obj, user_id, start_date, end_date)
 
     async def _filter_by_category_id(
             self, obj, start_date: Union[datetime, None], end_date: Union[datetime, None], category_id: int
@@ -78,15 +80,16 @@ class FinanceEntityBase(Base):
         return row[0]
 
     async def __get_query_with_filter_by_date(
-            self, obj, start_date: Union[datetime, None], end_date: Union[datetime, None]
+            self, obj, user_id: int, start_date: Union[datetime, None], end_date: Union[datetime, None]
     ):
         """ Добавление фильтра по датам в запрос
         :param obj: Модель расхода / дохода
+        :param user_id: Текущий пользователь
         :param start_date: Начальная дата
         :param end_date: Конечныя дата
         :return: SQL запрос
         """
-        query = select(obj)
+        query = select(obj).filter(obj.user_id == user_id)
         if start_date:
             query = query.filter(obj.date >= start_date)
         if end_date:
@@ -100,10 +103,10 @@ class FinanceEntityBase(Base):
 
 class IncomeEntity(FinanceEntityBase):
     """Обращение к БД доходов """
-    async def get_income_list(self, start_date: Union[datetime, None], end_date: Union[datetime, None]):
+    async def get_income_list(self, user_id: int, start_date: Union[datetime, None], end_date: Union[datetime, None]):
         if start_date or end_date:
-            return await self._filter_by_date(Income, start_date, end_date)
-        return await self._all(Income)
+            return await self._filter_by_date(Income, user_id, start_date, end_date)
+        return await self._all(Income, user_id)
 
     async def get_income_sum(self, start_date: datetime, end_date: datetime):
         return await self._amount_sum(Income, start_date, end_date)
@@ -130,10 +133,10 @@ class IncomeEntity(FinanceEntityBase):
 
 class ExpenseEntity(FinanceEntityBase):
     """ Обращение к БД расходов """
-    async def get_expense_list(self, start_date: Union[datetime, None], end_date: Union[datetime, None]):
+    async def get_expense_list(self, user_id: int, start_date: Union[datetime, None], end_date: Union[datetime, None]):
         if start_date or end_date:
-            return await self._filter_by_date(Expense, start_date, end_date)
-        return await self._all(Expense)
+            return await self._filter_by_date(Expense, user_id, start_date, end_date)
+        return await self._all(Expense, user_id)
 
     async def get_expense_sum(self, start_date: datetime, end_date: datetime):
         return await self._amount_sum(Expense, start_date, end_date)
@@ -204,10 +207,11 @@ class AccountEntity(Base):
         result = await self._filter_by_id(obj=Account, pk=pk)
         return result[0]
 
-    async def get_account_sum(self):
+    async def get_account_sum(self, user_id: int):
         query = select(Currency.name, func.sum(Account.amount).label("total")).\
             join(Account.currency).\
             filter(Account.add_to_balance).\
+            filter(Account.user_id == user_id).\
             group_by(Currency.name)
         result = await self.session.execute(query)
         row = result.all()

@@ -8,8 +8,8 @@ from MyFinance.schemas import CreateCategory, CreateAccount, CreateCurrency, Cre
     IncomeSchema, ExpenseSchema, CurrencySchema, CategorySchema
 from MyFinance.services import get_formatted_datetime
 from typing import Union, List
-from user.models import User
-from user.utils import current_user
+from users.models import User
+from users.utils import current_user
 
 
 router = APIRouter()
@@ -22,9 +22,9 @@ async def main(
         start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ) -> dict:
     account_sum, income, expense = await asyncio.gather(
-        AccountEntity(session).get_account_sum(),
-        get_income_list(session, start_date_str, end_date_str),
-        get_expense_list(session, start_date_str, end_date_str)
+        AccountEntity(session).get_account_sum(user_id=user.id),
+        get_income_list(user, session, start_date_str, end_date_str),
+        get_expense_list(user, session, start_date_str, end_date_str)
     )
     return {
         "account_sum": account_sum,
@@ -40,7 +40,7 @@ async def get_income_list(
         start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ) -> list:
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
-    return await IncomeEntity(session).get_income_list(start_date, end_date)
+    return await IncomeEntity(session).get_income_list(user.id, start_date, end_date)
 
 
 @router.get("/income/{id}", response_model=IncomeSchema)
@@ -73,7 +73,7 @@ async def get_expense_list(
         start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ) -> dict:
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
-    return await ExpenseEntity(session).get_expense_list(start_date, end_date)
+    return await ExpenseEntity(session).get_expense_list(user.id, start_date, end_date)
 
 
 @router.get("/expense/{id}", response_model=ExpenseSchema)
