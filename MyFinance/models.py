@@ -1,7 +1,8 @@
+from core.engine import Base
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from core.engine import Base
+from users.models import User
 
 
 class Currency(Base):
@@ -11,6 +12,7 @@ class Currency(Base):
 
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
     name = Column(String)
+    user_id = Column(Integer, ForeignKey('user.id'))
 
 
 class Account(Base):
@@ -25,6 +27,7 @@ class Account(Base):
     updated_at = Column(DateTime)
     amount = Column(Float)
     add_to_balance = Column(Boolean, default=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
 
 
 class Category(Base):
@@ -35,6 +38,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
     name = Column(String)
     category_type = Column(String)
+    user_id = Column(Integer, ForeignKey('user.id'))
 
 
 class Income(Base):
@@ -50,6 +54,7 @@ class Income(Base):
     account_id = Column(Integer, ForeignKey('account.id'))
     account = relationship("Account", lazy="joined")
     date = Column(DateTime, default=datetime.utcnow())
+    user_id = Column(Integer, ForeignKey('user.id'))
 
 
 class Expense(Base):
@@ -65,3 +70,4 @@ class Expense(Base):
     account_id = Column(Integer, ForeignKey('account.id'))
     account = relationship("Account", lazy="joined")
     date = Column(DateTime, default=datetime.utcnow())
+    user_id = Column(Integer, ForeignKey('user.id'))

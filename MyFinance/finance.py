@@ -8,8 +8,8 @@ from MyFinance.schemas import CreateCategory, CreateAccount, CreateCurrency, Cre
     IncomeSchema, ExpenseSchema, CurrencySchema, CategorySchema
 from MyFinance.services import get_formatted_datetime
 from typing import Union, List
-from user.models import User
-from user.utils import current_user
+from users.models import User
+from users.utils import current_user
 
 
 router = APIRouter()
@@ -22,9 +22,9 @@ async def main(
         start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ) -> dict:
     account_sum, income, expense = await asyncio.gather(
-        AccountEntity(session).get_account_sum(),
-        get_income_list(session, start_date_str, end_date_str),
-        get_expense_list(session, start_date_str, end_date_str)
+        AccountEntity(session).get_account_sum(user_id=user.id),
+        get_income_list(user, session, start_date_str, end_date_str),
+        get_expense_list(user, session, start_date_str, end_date_str)
     )
     return {
         "account_sum": account_sum,
@@ -40,14 +40,14 @@ async def get_income_list(
         start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ) -> list:
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
-    return await IncomeEntity(session).get_income_list(start_date, end_date)
+    return await IncomeEntity(session).get_income_list(user.id, start_date, end_date)
 
 
-@router.get("/income/{id}", response_model=IncomeSchema)
+@router.get("/income/{id}", response_model=Union[IncomeSchema, None])
 async def get_income_by_id(
         pk: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await IncomeEntity(session).get_income_by_id(pk)
+    return await IncomeEntity(session).get_income_by_id(pk, user.id)
 
 
 @router.get("/income/category/{id}", response_model=List[IncomeSchema])
@@ -56,14 +56,22 @@ async def get_income_by_category_id(
         start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ) -> list:
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
-    return await IncomeEntity(session).get_income_list_by_category(pk, start_date, end_date)
+    return await IncomeEntity(session).get_income_list_by_category(pk, user.id, start_date, end_date)
 
 
 @router.post("/income")
 async def create_income(
         data: CreateFinance, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await IncomeEntity(session).create(data)
+    return await IncomeEntity(session).create(data, user.id)
+
+
+@router.patch("/income/{id}")
+async def update_item(
+        pk: int, data: CreateFinance, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await IncomeEntity(session).update(pk, data, user.id)
 
 
 @router.get("/expense", response_model=List[ExpenseSchema])
@@ -73,14 +81,14 @@ async def get_expense_list(
         start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ) -> dict:
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
-    return await ExpenseEntity(session).get_expense_list(start_date, end_date)
+    return await ExpenseEntity(session).get_expense_list(user.id, start_date, end_date)
 
 
-@router.get("/expense/{id}", response_model=ExpenseSchema)
+@router.get("/expense/{id}", response_model=Union[ExpenseSchema, None])
 async def get_expense_by_id(
         pk: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await ExpenseEntity(session).get_expense_by_id(pk)
+    return await ExpenseEntity(session).get_expense_by_id(pk, user.id)
 
 
 @router.get("/expense/category/{id}", response_model=List[ExpenseSchema])
@@ -89,72 +97,80 @@ async def get_expense_by_category_id(
         start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
 ):
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
-    return await ExpenseEntity(session).get_expense_list_by_category(pk, start_date, end_date)
+    return await ExpenseEntity(session).get_expense_list_by_category(pk, user.id, start_date, end_date)
 
 
 @router.post("/expense")
 async def create_expense(
         data: CreateFinance, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await ExpenseEntity(session).create(data)
+    return await ExpenseEntity(session).create(data, user.id)
+
+
+@router.patch("/expense/{id}")
+async def update_item(
+        pk: int, data: CreateFinance, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await ExpenseEntity(session).update(pk, data, user.id)
 
 
 @router.get("/category", response_model=List[CategorySchema])
 async def get_category_list(
         user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ) -> list:
-    return await CategoryEntity(session).get_category_list()
+    return await CategoryEntity(session).get_category_list(user.id)
 
 
-@router.get("/category/{id}", response_model=CategorySchema)
+@router.get("/category/{id}", response_model=Union[CategorySchema, None])
 async def get_category_by_id(
         pk: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await CategoryEntity(session).get_category_by_id(pk)
+    return await CategoryEntity(session).get_category_by_id(pk, user.id)
 
 
 @router.post("/category")
 async def create_category(
         data: CreateCategory, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await CategoryEntity(session).create(data)
+    return await CategoryEntity(session).create(user.id, data)
 
 
 @router.get("/currency", response_model=List[CurrencySchema])
 async def get_currency_list(user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
-    return await CurrencyEntity(session).get_currency_list()
+    return await CurrencyEntity(session).get_currency_list(user.id)
 
 
-@router.get("/currency/{id}", response_model=CurrencySchema)
+@router.get("/currency/{id}", response_model=Union[CurrencySchema, None])
 async def get_currency_by_id(
         pk: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await CurrencyEntity(session).get_currency_by_id(pk)
+    return await CurrencyEntity(session).get_currency_by_id(pk, user.id)
 
 
 @router.post("/currency")
 async def create_currency(
         data: CreateCurrency, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await CurrencyEntity(session).create(data)
+    return await CurrencyEntity(session).create(user.id, data)
 
 
 @router.get("/account", response_model=List[AccountSchema])
 async def get_account_list(
         user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ) -> list:
-    return await AccountEntity(session).get_account_list()
+    return await AccountEntity(session).get_account_list(user.id)
 
 
-@router.get("/account/{id}", response_model=AccountSchema)
+@router.get("/account/{id}", response_model=Union[AccountSchema, None])
 async def get_account_by_id(
         pk: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await AccountEntity(session).get_account_by_id(pk)
+    return await AccountEntity(session).get_account_by_id(pk, user.id)
 
 
 @router.post("/account")
 async def create_account(
         data: CreateAccount, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
-    return await AccountEntity(session).create(data)
+    return await AccountEntity(session).create(data, user.id)
