@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from MyFinance import finance
-from user.auth import auth_backend
-from user.schemas import UserRead, UserCreate
-from user.utils import fastapi_users
+from users.auth import auth_backend
+from users.schemas import UserRead, UserCreate
+from users.utils import fastapi_users
 
 routes = APIRouter()
 

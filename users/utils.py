@@ -1,7 +1,7 @@
 from fastapi_users import FastAPIUsers, fastapi_users
-from user.auth import auth_backend
-from user.models import User
-from user.manager import get_user_manager
+from users.auth import auth_backend
+from users.models import User
+from users.manager import get_user_manager
 
 
 fastapi_users = FastAPIUsers[User, int](
