@@ -181,10 +181,15 @@ class ExpenseEntity(FinanceEntityBase):
 
     async def create(self, data: CreateFinance, user_id: int):
         expense = Expense(**data.dict())
-        query = select(Income).filter(Expense.id == expense.account_id)
+        query = select(Account).filter(Account.id == expense.account_id).filter(Account.user_id == user_id)
         result = await self.session.execute(query)
         account = self._first(result=result)
-        account[0].amount += expense.amount
+        if not account:
+            return {
+                "status": "fail",
+                "message": "Account is not found"
+            }
+        account.amount += expense.amount
         return await self._add(obj=Expense, user_id=user_id, data=data)
 
     async def get_expense_by_id(self, pk: int, user_id: int):
