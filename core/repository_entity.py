@@ -219,7 +219,7 @@ class ExpenseEntity(FinanceEntityBase):
                 "status": "fail",
                 "message": "Expense is not found"
             }
-        return self._update(expense, data)
+        return await self._update(expense, data)
 
     async def delete(self, pk: int, user_id: int):
         expense = await self.session.get(Expense, pk)
