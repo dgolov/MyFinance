@@ -74,6 +74,14 @@ async def update_item(
     return await IncomeEntity(session).update(pk, data, user.id)
 
 
+@router.delete("/income/{id}")
+async def update_item(
+        pk: int, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await IncomeEntity(session).delete(pk, user.id)
+
+
 @router.get("/expense", response_model=List[ExpenseSchema])
 async def get_expense_list(
         user: User = Depends(current_user),
@@ -113,6 +121,14 @@ async def update_item(
         session: AsyncSession = Depends(get_async_session)
 ):
     return await ExpenseEntity(session).update(pk, data, user.id)
+
+
+@router.delete("/expense/{id}")
+async def update_item(
+        pk: int, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await ExpenseEntity(session).delete(pk, user.id)
 
 
 @router.get("/category", response_model=List[CategorySchema])
