@@ -140,7 +140,7 @@ class IncomeEntity(FinanceEntityBase):
         if not account:
             return {
                 "status": "fail",
-                "message": "Account is not found"
+                "message": "Income is not found"
             }
         account.amount += income.amount
         return await self._add(obj=Income, user_id=user_id, data=data)
@@ -187,7 +187,7 @@ class ExpenseEntity(FinanceEntityBase):
         if not account:
             return {
                 "status": "fail",
-                "message": "Account is not found"
+                "message": "Expense is not found"
             }
         account.amount += expense.amount
         return await self._add(obj=Expense, user_id=user_id, data=data)
@@ -197,7 +197,7 @@ class ExpenseEntity(FinanceEntityBase):
         if not expense or expense.user_id != user_id:
             return {
                 "status": "fail",
-                "message": "Income is not found"
+                "message": "Expense is not found"
             }
         return self._update(expense, data)
 
@@ -294,7 +294,7 @@ class AccountEntity(Base):
         if not account or account.user_id != user_id:
             return {
                 "status": "fail",
-                "message": "Category is not found"
+                "message": "Account is not found"
             }
         return await self._update(account, data)
 
