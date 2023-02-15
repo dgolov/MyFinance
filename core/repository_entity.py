@@ -302,6 +302,15 @@ class CategoryEntity(Base):
             }
         return await self._update(category, data)
 
+    async def delete(self, pk: int, user_id: int):
+        category = await self.session.get(Category, pk)
+        if not category or category.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Category is not found"
+            }
+        return await self._delete(category)
+
     async def get_category_by_id(self, pk: int, user_id: int):
         query = select(Category).\
             filter(Category.user_id == user_id or Currency.user_id == None).\
@@ -335,6 +344,15 @@ class AccountEntity(Base):
                 "message": "Account is not found"
             }
         return await self._update(account, data)
+
+    async def delete(self, pk: int, user_id: int):
+        account = await self.session.get(Account, pk)
+        if not account or account.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Account is not found"
+            }
+        return await self._delete(account)
 
     async def get_account_by_id(self, pk: int, user_id: int):
         query = select(Account).filter(Account.user_id == user_id).filter(Account.id == int(pk))
