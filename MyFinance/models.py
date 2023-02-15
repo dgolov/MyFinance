@@ -2,7 +2,6 @@ from core.engine import Base
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from users.models import User
 
 
 class Currency(Base):
