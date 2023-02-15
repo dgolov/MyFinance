@@ -51,6 +51,13 @@ class Base:
             "status": "success"
         }
 
+    async def _delete(self, obj):
+        await self.session.delete(obj)
+        await self.session.commit()
+        return {
+            "status": "success"
+        }
+
 
 class FinanceEntityBase(Base):
     """ Базобый класс обращения к БД для доходов / расходов
@@ -154,6 +161,19 @@ class IncomeEntity(FinanceEntityBase):
             }
         return await self._update(income, data)
 
+    async def delete(self, pk: int, user_id: int):
+        income = await self.session.get(Income, pk)
+        query = select(Account).filter(Account.id == income.account_id).filter(Account.user_id == user_id)
+        result = await self.session.execute(query)
+        account = self._first(result=result)
+        if not income or income.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Income is not found"
+            }
+        account.amount -= income.amount
+        return await self._delete(income)
+
     async def get_income_by_id(self, pk: int, user_id: int):
         query = select(Income).filter(Income.user_id == user_id).filter(Income.id == int(pk))
         result = await self.session.execute(query)
@@ -200,6 +220,15 @@ class ExpenseEntity(FinanceEntityBase):
                 "message": "Expense is not found"
             }
         return self._update(expense, data)
+
+    async def delete(self, pk: int, user_id: int):
+        expense = await self.session.get(Expense, pk)
+        if not expense or expense.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Expense is not found"
+            }
+        return await self._delete(expense)
 
     async def get_expense_by_id(self, pk: int, user_id: int):
         query = select(Expense).filter(Income.user_id == user_id).filter(Expense.id == int(pk))
