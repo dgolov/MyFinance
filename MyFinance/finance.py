@@ -75,7 +75,7 @@ async def update_income(
 
 
 @router.delete("/income/{id}")
-async def update_income(
+async def delete_income(
         pk: int, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
@@ -124,7 +124,7 @@ async def update_expense(
 
 
 @router.delete("/expense/{id}")
-async def update_expense(
+async def delete_expense(
         pk: int, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
