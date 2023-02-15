@@ -152,7 +152,7 @@ class IncomeEntity(FinanceEntityBase):
                 "status": "fail",
                 "message": "Income is not found"
             }
-        return self._update(income, data)
+        return await self._update(income, data)
 
     async def get_income_by_id(self, pk: int, user_id: int):
         query = select(Income).filter(Income.user_id == user_id).filter(Income.id == int(pk))
@@ -224,6 +224,15 @@ class CurrencyEntity(Base):
     async def create(self, user_id: int, data: CreateCurrency):
         return await self._add(obj=Currency, user_id=user_id, data=data)
 
+    async def update(self, pk: int, data: CreateCurrency, user_id: int):
+        currency = await self.session.get(Currency, pk)
+        if not currency or currency.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Currency is not found"
+            }
+        return await self._update(currency, data)
+
     async def get_currency_by_id(self, pk: int, user_id: int):
         query = select(Currency).filter(Currency.user_id == user_id).filter(Currency.id == int(pk))
         result = await self.session.execute(query)
@@ -245,6 +254,15 @@ class CategoryEntity(Base):
 
     async def create(self, user_id: int, data: CreateCategory):
         return await self._add(obj=Category, user_id=user_id, data=data)
+
+    async def update(self, pk: int, data: CreateCategory, user_id: int):
+        category = await self.session.get(Category, pk)
+        if not category or category.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Category is not found"
+            }
+        return await self._update(category, data)
 
     async def get_category_by_id(self, pk: int, user_id: int):
         query = select(Category).\
@@ -269,6 +287,16 @@ class AccountEntity(Base):
 
     async def create(self, data: CreateAccount, user_id: int):
         return await self._add(obj=Account, user_id=user_id, data=data)
+
+    async def update(self, pk: int, data: CreateAccount, user_id: int):
+        account = await self.session.get(Account, pk)
+        print(account)
+        if not account or account.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Category is not found"
+            }
+        return await self._update(account, data)
 
     async def get_account_by_id(self, pk: int, user_id: int):
         query = select(Account).filter(Account.user_id == user_id).filter(Account.id == int(pk))
