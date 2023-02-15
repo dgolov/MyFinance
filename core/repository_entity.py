@@ -262,6 +262,15 @@ class CurrencyEntity(Base):
             }
         return await self._update(currency, data)
 
+    async def delete(self, pk: int, user_id: int):
+        currency = await self.session.get(Currency, pk)
+        if not currency or currency.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Currency is not found"
+            }
+        return await self._delete(currency)
+
     async def get_currency_by_id(self, pk: int, user_id: int):
         query = select(Currency).filter(Currency.user_id == user_id).filter(Currency.id == int(pk))
         result = await self.session.execute(query)
