@@ -337,7 +337,6 @@ class AccountEntity(Base):
 
     async def update(self, pk: int, data: CreateAccount, user_id: int):
         account = await self.session.get(Account, pk)
-        print(account)
         if not account or account.user_id != user_id:
             return {
                 "status": "fail",
