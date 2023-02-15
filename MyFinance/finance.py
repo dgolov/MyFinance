@@ -67,7 +67,7 @@ async def create_income(
 
 
 @router.patch("/income/{id}")
-async def update_item(
+async def update_income(
         pk: int, data: CreateFinance, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
@@ -75,7 +75,7 @@ async def update_item(
 
 
 @router.delete("/income/{id}")
-async def update_item(
+async def update_income(
         pk: int, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
@@ -116,7 +116,7 @@ async def create_expense(
 
 
 @router.patch("/expense/{id}")
-async def update_item(
+async def update_expense(
         pk: int, data: CreateFinance, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
@@ -124,7 +124,7 @@ async def update_item(
 
 
 @router.delete("/expense/{id}")
-async def update_item(
+async def update_expense(
         pk: int, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
@@ -153,7 +153,7 @@ async def create_category(
 
 
 @router.patch("/category/{id}")
-async def update_item(
+async def update_category(
         pk: int, data: CreateCategory, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
@@ -180,7 +180,7 @@ async def create_currency(
 
 
 @router.patch("/currency/{id}")
-async def update_item(
+async def update_currency(
         pk: int, data: CreateCurrency, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
@@ -209,7 +209,7 @@ async def create_account(
 
 
 @router.patch("/account/{id}")
-async def update_item(
+async def update_currency(
         pk: int, data: CreateAccount, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
