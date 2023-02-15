@@ -51,6 +51,13 @@ class Base:
             "status": "success"
         }
 
+    async def _delete(self, obj):
+        await self.session.delete(obj)
+        await self.session.commit()
+        return {
+            "status": "success"
+        }
+
 
 class FinanceEntityBase(Base):
     """ Базобый класс обращения к БД для доходов / расходов
@@ -140,7 +147,7 @@ class IncomeEntity(FinanceEntityBase):
         if not account:
             return {
                 "status": "fail",
-                "message": "Account is not found"
+                "message": "Income is not found"
             }
         account.amount += income.amount
         return await self._add(obj=Income, user_id=user_id, data=data)
@@ -152,7 +159,20 @@ class IncomeEntity(FinanceEntityBase):
                 "status": "fail",
                 "message": "Income is not found"
             }
-        return self._update(income, data)
+        return await self._update(income, data)
+
+    async def delete(self, pk: int, user_id: int):
+        income = await self.session.get(Income, pk)
+        query = select(Account).filter(Account.id == income.account_id).filter(Account.user_id == user_id)
+        result = await self.session.execute(query)
+        account = self._first(result=result)
+        if not income or income.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Income is not found"
+            }
+        account.amount -= income.amount
+        return await self._delete(income)
 
     async def get_income_by_id(self, pk: int, user_id: int):
         query = select(Income).filter(Income.user_id == user_id).filter(Income.id == int(pk))
@@ -187,7 +207,7 @@ class ExpenseEntity(FinanceEntityBase):
         if not account:
             return {
                 "status": "fail",
-                "message": "Account is not found"
+                "message": "Expense is not found"
             }
         account.amount += expense.amount
         return await self._add(obj=Expense, user_id=user_id, data=data)
@@ -197,9 +217,18 @@ class ExpenseEntity(FinanceEntityBase):
         if not expense or expense.user_id != user_id:
             return {
                 "status": "fail",
-                "message": "Income is not found"
+                "message": "Expense is not found"
             }
-        return self._update(expense, data)
+        return await self._update(expense, data)
+
+    async def delete(self, pk: int, user_id: int):
+        expense = await self.session.get(Expense, pk)
+        if not expense or expense.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Expense is not found"
+            }
+        return await self._delete(expense)
 
     async def get_expense_by_id(self, pk: int, user_id: int):
         query = select(Expense).filter(Income.user_id == user_id).filter(Expense.id == int(pk))
@@ -224,6 +253,24 @@ class CurrencyEntity(Base):
     async def create(self, user_id: int, data: CreateCurrency):
         return await self._add(obj=Currency, user_id=user_id, data=data)
 
+    async def update(self, pk: int, data: CreateCurrency, user_id: int):
+        currency = await self.session.get(Currency, pk)
+        if not currency or currency.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Currency is not found"
+            }
+        return await self._update(currency, data)
+
+    async def delete(self, pk: int, user_id: int):
+        currency = await self.session.get(Currency, pk)
+        if not currency or currency.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Currency is not found"
+            }
+        return await self._delete(currency)
+
     async def get_currency_by_id(self, pk: int, user_id: int):
         query = select(Currency).filter(Currency.user_id == user_id).filter(Currency.id == int(pk))
         result = await self.session.execute(query)
@@ -245,6 +292,24 @@ class CategoryEntity(Base):
 
     async def create(self, user_id: int, data: CreateCategory):
         return await self._add(obj=Category, user_id=user_id, data=data)
+
+    async def update(self, pk: int, data: CreateCategory, user_id: int):
+        category = await self.session.get(Category, pk)
+        if not category or category.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Category is not found"
+            }
+        return await self._update(category, data)
+
+    async def delete(self, pk: int, user_id: int):
+        category = await self.session.get(Category, pk)
+        if not category or category.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Category is not found"
+            }
+        return await self._delete(category)
 
     async def get_category_by_id(self, pk: int, user_id: int):
         query = select(Category).\
@@ -269,6 +334,24 @@ class AccountEntity(Base):
 
     async def create(self, data: CreateAccount, user_id: int):
         return await self._add(obj=Account, user_id=user_id, data=data)
+
+    async def update(self, pk: int, data: CreateAccount, user_id: int):
+        account = await self.session.get(Account, pk)
+        if not account or account.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Account is not found"
+            }
+        return await self._update(account, data)
+
+    async def delete(self, pk: int, user_id: int):
+        account = await self.session.get(Account, pk)
+        if not account or account.user_id != user_id:
+            return {
+                "status": "fail",
+                "message": "Account is not found"
+            }
+        return await self._delete(account)
 
     async def get_account_by_id(self, pk: int, user_id: int):
         query = select(Account).filter(Account.user_id == user_id).filter(Account.id == int(pk))

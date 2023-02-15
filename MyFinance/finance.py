@@ -67,11 +67,19 @@ async def create_income(
 
 
 @router.patch("/income/{id}")
-async def update_item(
+async def update_income(
         pk: int, data: CreateFinance, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
     return await IncomeEntity(session).update(pk, data, user.id)
+
+
+@router.delete("/income/{id}")
+async def delete_income(
+        pk: int, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await IncomeEntity(session).delete(pk, user.id)
 
 
 @router.get("/expense", response_model=List[ExpenseSchema])
@@ -108,11 +116,19 @@ async def create_expense(
 
 
 @router.patch("/expense/{id}")
-async def update_item(
+async def update_expense(
         pk: int, data: CreateFinance, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
     return await ExpenseEntity(session).update(pk, data, user.id)
+
+
+@router.delete("/expense/{id}")
+async def delete_expense(
+        pk: int, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await ExpenseEntity(session).delete(pk, user.id)
 
 
 @router.get("/category", response_model=List[CategorySchema])
@@ -136,6 +152,22 @@ async def create_category(
     return await CategoryEntity(session).create(user.id, data)
 
 
+@router.patch("/category/{id}")
+async def update_category(
+        pk: int, data: CreateCategory, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await CategoryEntity(session).update(pk, data, user.id)
+
+
+@router.delete("/category/{id}")
+async def delete_category(
+        pk: int, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await CategoryEntity(session).delete(pk, user.id)
+
+
 @router.get("/currency", response_model=List[CurrencySchema])
 async def get_currency_list(user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
     return await CurrencyEntity(session).get_currency_list(user.id)
@@ -153,6 +185,22 @@ async def create_currency(
         data: CreateCurrency, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
     return await CurrencyEntity(session).create(user.id, data)
+
+
+@router.patch("/currency/{id}")
+async def update_currency(
+        pk: int, data: CreateCurrency, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await CurrencyEntity(session).update(pk, data, user.id)
+
+
+@router.delete("/currency/{id}")
+async def delete_currency(
+        pk: int, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await CategoryEntity(session).delete(pk, user.id)
 
 
 @router.get("/account", response_model=List[AccountSchema])
@@ -174,3 +222,19 @@ async def create_account(
         data: CreateAccount, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)
 ):
     return await AccountEntity(session).create(data, user.id)
+
+
+@router.patch("/account/{id}")
+async def update_currency(
+        pk: int, data: CreateAccount, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await AccountEntity(session).update(pk, data, user.id)
+
+
+@router.delete("/account/{id}")
+async def delete_account(
+        pk: int, user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await AccountEntity(session).delete(pk, user.id)
