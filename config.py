@@ -37,7 +37,7 @@ log_config = {
     },
 }
 
-# logging.config.dictConfig(log_config)
+logging.config.dictConfig(log_config)
 logger_mode = 'console' if int(os.environ.get('DEBUG', True)) else 'log'
 logger = logging.getLogger(logger_mode)
 
