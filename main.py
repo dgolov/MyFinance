@@ -1,3 +1,4 @@
+from config import logger
 from fastapi import FastAPI
 from starlette.requests import Request
 from starlette.responses import Response
@@ -10,4 +11,4 @@ app = FastAPI()
 
 
 app.include_router(routes)
-# logger.debug("Start application")
+logger.debug("Start application")
