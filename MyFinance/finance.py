@@ -14,23 +14,24 @@ from users.utils import current_user
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/", response_model=schemas.MainSchema)
 async def main(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session),
         start_date_str: Union[str, None] = None,
         end_date_str: Union[str, None] = None
-) -> dict:
+) -> schemas.MainSchema:
     account_sum, income, expense = await asyncio.gather(
         repository_entity.AccountEntity(session).get_account_sum(user_id=user.id),
         get_income_list(user, session, start_date_str, end_date_str),
         get_expense_list(user, session, start_date_str, end_date_str)
     )
-    return {
-        "account_sum": account_sum,
-        "income": income,
-        "expense_sum": expense,
-    }
+    print(account_sum)
+    return schemas.MainSchema(
+        account_sum=account_sum,
+        income=income,
+        expense=expense
+    )
 
 
 @router.get("/income", response_model=List[schemas.IncomeSchema])
