@@ -1,5 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, Field, root_validator
+from typing import List
 
 
 class CurrencyBase(BaseModel):
@@ -114,3 +115,11 @@ class CreateFinance(BaseFinance):
     """
     category_id: int
     account_id: int
+
+
+class MainSchema(BaseModel):
+    """ Серилизация главной строницы
+    """
+    account_sum: List[dict]
+    income: List[IncomeSchema]
+    expense: List[ExpenseSchema]
