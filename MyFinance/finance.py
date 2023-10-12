@@ -5,8 +5,7 @@ from core.engine import get_async_session
 from core import repository_entity
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
-from MyFinance import schemas
-from MyFinance.services import get_formatted_datetime, prepare_response
+from MyFinance import schemas, services
 from typing import Union, List
 from users.models import User
 from users.utils import current_user
@@ -41,7 +40,7 @@ async def get_income_list(
         start_date_str: Union[str, None] = None,
         end_date_str: Union[str, None] = None
 ) -> List[schemas.IncomeSchema]:
-    start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
+    start_date, end_date = services.get_formatted_datetime(start=start_date_str, end=end_date_str)
     return await repository_entity.IncomeEntity(session).get_income_list(user.id, start_date, end_date)
 
 
@@ -62,7 +61,7 @@ async def get_income_by_category_id(
         start_date_str: Union[str, None] = None,
         end_date_str: Union[str, None] = None
 ) -> List[schemas.IncomeSchema]:
-    start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
+    start_date, end_date = services.get_formatted_datetime(start=start_date_str, end=end_date_str)
     return await repository_entity.IncomeEntity(session).get_income_list_by_category(pk, user.id, start_date, end_date)
 
 
@@ -73,7 +72,7 @@ async def create_income(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.IncomeEntity(session).create(data, user.id)
-    return prepare_response(result, success_status_code=status.HTTP_201_CREATED)
+    return services.prepare_response(result, success_status_code=status.HTTP_201_CREATED)
 
 
 @router.patch("/income/{id}")
@@ -84,7 +83,7 @@ async def update_income(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.IncomeEntity(session).update(pk, data, user.id)
-    return prepare_response(result)
+    return services.prepare_response(result)
 
 
 @router.delete("/income/{id}")
@@ -94,7 +93,7 @@ async def delete_income(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.IncomeEntity(session).delete(pk, user.id)
-    return prepare_response(result)
+    return services.prepare_response(result)
 
 
 @router.get("/expense", response_model=List[schemas.ExpenseSchema])
@@ -104,7 +103,7 @@ async def get_expense_list(
         start_date_str: Union[str, None] = None,
         end_date_str: Union[str, None] = None
 ) -> List[schemas.ExpenseSchema]:
-    start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
+    start_date, end_date = services.get_formatted_datetime(start=start_date_str, end=end_date_str)
     return await repository_entity.ExpenseEntity(session).get_expense_list(user.id, start_date, end_date)
 
 
@@ -124,7 +123,7 @@ async def get_expense_by_category_id(
         start_date_str: Union[str, None] = None,
         end_date_str: Union[str, None] = None
 ) -> List[schemas.ExpenseSchema]:
-    start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
+    start_date, end_date = services.get_formatted_datetime(start=start_date_str, end=end_date_str)
     return await repository_entity.ExpenseEntity(session).get_expense_list_by_category(
         pk, user.id, start_date, end_date
     )
@@ -137,7 +136,7 @@ async def create_expense(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.ExpenseEntity(session).create(data, user.id)
-    return prepare_response(result, success_status_code=status.HTTP_201_CREATED)
+    return services.prepare_response(result, success_status_code=status.HTTP_201_CREATED)
 
 
 @router.patch("/expense/{id}")
@@ -147,7 +146,7 @@ async def update_expense(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.ExpenseEntity(session).update(pk, data, user.id)
-    return prepare_response(result)
+    return services.prepare_response(result)
 
 
 @router.delete("/expense/{id}")
@@ -157,7 +156,7 @@ async def delete_expense(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.ExpenseEntity(session).delete(pk, user.id)
-    return prepare_response(result)
+    return services.prepare_response(result)
 
 
 @router.get("/category", response_model=List[schemas.CategorySchema])
@@ -183,7 +182,7 @@ async def create_category(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.CategoryEntity(session).create(user.id, data)
-    return prepare_response(result, success_status_code=status.HTTP_201_CREATED)
+    return services.prepare_response(result, success_status_code=status.HTTP_201_CREATED)
 
 
 @router.patch("/category/{id}")
@@ -194,7 +193,7 @@ async def update_category(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.CategoryEntity(session).update(pk, data, user.id)
-    return prepare_response(result)
+    return services.prepare_response(result)
 
 
 @router.delete("/category/{id}")
@@ -204,7 +203,7 @@ async def delete_category(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.CategoryEntity(session).delete(pk, user.id)
-    return prepare_response(result)
+    return services.prepare_response(result)
 
 
 @router.get("/currency", response_model=List[schemas.CurrencySchema])
@@ -231,7 +230,7 @@ async def create_currency(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.CurrencyEntity(session).create(user.id, data)
-    return prepare_response(result, success_status_code=status.HTTP_201_CREATED)
+    return services.prepare_response(result, success_status_code=status.HTTP_201_CREATED)
 
 
 @router.patch("/currency/{id}")
@@ -242,7 +241,7 @@ async def update_currency(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.CurrencyEntity(session).update(pk, data, user.id)
-    return prepare_response(result)
+    return services.prepare_response(result)
 
 
 @router.delete("/currency/{id}")
@@ -252,7 +251,7 @@ async def delete_currency(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.CategoryEntity(session).delete(pk, user.id)
-    return prepare_response(result)
+    return services.prepare_response(result)
 
 
 @router.get("/account", response_model=List[schemas.AccountSchema])
@@ -279,7 +278,7 @@ async def create_account(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.AccountEntity(session).create(data, user.id)
-    return prepare_response(result, success_status_code=status.HTTP_201_CREATED)
+    return services.prepare_response(result, success_status_code=status.HTTP_201_CREATED)
 
 
 @router.patch("/account/{id}")
@@ -290,7 +289,7 @@ async def update_currency(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.AccountEntity(session).update(pk, data, user.id)
-    return prepare_response(result)
+    return services.prepare_response(result)
 
 
 @router.delete("/account/{id}")
@@ -300,4 +299,4 @@ async def delete_account(
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
     result = await repository_entity.AccountEntity(session).delete(pk, user.id)
-    return prepare_response(result)
+    return services.prepare_response(result)
