@@ -1,4 +1,6 @@
 from datetime import datetime
+from fastapi import status
+from fastapi.responses import JSONResponse
 
 
 def create_formatted_datetime(start: str, end: str) -> tuple:
@@ -29,3 +31,19 @@ def get_formatted_datetime(start: str, end: str) -> tuple:
         end_date = datetime.strptime(end, "%Y-%m-%dT%H:%M:%S.%f")
 
     return start_date, end_date
+
+
+def prepare_response(
+        result: dict,
+        success_status_code=status.HTTP_200_OK,
+        fail_status_code=status.HTTP_400_BAD_REQUEST,
+) -> JSONResponse:
+    if result.get("status") == "fail":
+        return JSONResponse(
+            status_code=fail_status_code,
+            content={"message": result.get("message")}
+        )
+    return JSONResponse(
+        status_code=success_status_code,
+        content={"message": "ok"}
+    )
