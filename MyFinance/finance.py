@@ -19,7 +19,8 @@ router = APIRouter()
 async def main(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session),
-        start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
+        start_date_str: Union[str, None] = None,
+        end_date_str: Union[str, None] = None
 ) -> dict:
     account_sum, income, expense = await asyncio.gather(
         AccountEntity(session).get_account_sum(user_id=user.id),
@@ -37,7 +38,8 @@ async def main(
 async def get_income_list(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session),
-        start_date_str: Union[str, None] = None, end_date_str: Union[str, None] = None
+        start_date_str: Union[str, None] = None,
+        end_date_str: Union[str, None] = None
 ) -> list:
     start_date, end_date = get_formatted_datetime(start=start_date_str, end=end_date_str)
     return await IncomeEntity(session).get_income_list(user.id, start_date, end_date)
