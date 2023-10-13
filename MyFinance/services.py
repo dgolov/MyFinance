@@ -1,6 +1,8 @@
 from datetime import datetime
 from fastapi import status
 from fastapi.responses import JSONResponse
+from MyFinance import schemas
+from typing import List
 
 
 def create_formatted_datetime(start: str, end: str) -> tuple:
@@ -47,3 +49,22 @@ def prepare_response(
         status_code=success_status_code,
         content={"message": "ok"}
     )
+
+
+def prepare_account_sum(account_sum_db_result: List[dict]) -> List[schemas.AccountSumSchema]:
+    """ Подготовка и сериализация ответа из бд по данным счетов
+        для представления на главной странице
+    :param account_sum_db_result: Ответ бд
+    :return: Серилизованные данные
+    """
+    account_sum = []
+
+    for result in account_sum_db_result:
+        account_sum.extend(
+            list(
+                schemas.AccountSumSchema(currency=currency, amount=amount)
+                for currency, amount in result.items()
+            )
+        )
+
+    return account_sum
