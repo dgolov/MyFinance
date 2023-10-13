@@ -28,6 +28,8 @@ async def main(
         get_income_list(user, session, start_date_str, end_date_str),
         get_expense_list(user, session, start_date_str, end_date_str)
     )
+
+    account_sum = services.prepare_account_sum(account_sum_db_result=account_sum_db_result)
     return schemas.MainSchema(
         account_sum=account_sum,
         income=income,
