@@ -117,9 +117,14 @@ class CreateFinance(BaseFinance):
     account_id: int
 
 
+class AccountSumSchema(BaseModel):
+    currency: str = "USD"
+    amount: float = 1000
+
+
 class MainSchema(BaseModel):
     """ Серилизация главной строницы
     """
-    account_sum: List[dict]
+    account_sum: List[AccountSumSchema]
     income: List[IncomeSchema]
     expense: List[ExpenseSchema]
