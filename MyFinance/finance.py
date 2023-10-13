@@ -21,7 +21,9 @@ async def main(
         start_date_str: Union[str, None] = None,
         end_date_str: Union[str, None] = None
 ) -> schemas.MainSchema:
-    account_sum, income, expense = await asyncio.gather(
+    """ Main endpoint
+    """
+    account_sum_db_result, income, expense = await asyncio.gather(
         repository_entity.AccountEntity(session).get_account_sum(user_id=user.id),
         get_income_list(user, session, start_date_str, end_date_str),
         get_expense_list(user, session, start_date_str, end_date_str)
@@ -40,6 +42,8 @@ async def get_income_list(
         start_date_str: Union[str, None] = None,
         end_date_str: Union[str, None] = None
 ) -> List[schemas.IncomeSchema]:
+    """ Get income list endpoint
+    """
     start_date, end_date = services.get_formatted_datetime(
         start=start_date_str,
         end=end_date_str
@@ -55,6 +59,8 @@ async def get_income_by_id(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> Union[schemas.IncomeSchema, None]:
+    """ Get income by id endpoint
+    """
     return await repository_entity.IncomeEntity(session).get_income_by_id(
         pk, user.id
     )
@@ -68,6 +74,8 @@ async def get_income_by_category_id(
         start_date_str: Union[str, None] = None,
         end_date_str: Union[str, None] = None
 ) -> List[schemas.IncomeSchema]:
+    """ Get income by category id endpoint
+    """
     start_date, end_date = services.get_formatted_datetime(
         start=start_date_str,
         end=end_date_str
@@ -83,6 +91,8 @@ async def create_income(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Add income endpoint
+    """
     result = await repository_entity.IncomeEntity(session).create(
         data, user.id
     )
@@ -99,6 +109,8 @@ async def update_income(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Update income endpoint
+    """
     result = await repository_entity.IncomeEntity(session).update(
         pk, data, user.id
     )
@@ -111,6 +123,8 @@ async def delete_income(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Delete income endpoint
+    """
     result = await repository_entity.IncomeEntity(session).delete(
         pk, user.id
     )
@@ -124,6 +138,8 @@ async def get_expense_list(
         start_date_str: Union[str, None] = None,
         end_date_str: Union[str, None] = None
 ) -> List[schemas.ExpenseSchema]:
+    """ Get expense list endpoint
+    """
     start_date, end_date = services.get_formatted_datetime(
         start=start_date_str,
         end=end_date_str
@@ -138,6 +154,8 @@ async def get_expense_by_id(
         pk: int, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> Union[schemas.ExpenseSchema, None]:
+    """ Get expense by id endpoint
+    """
     return await repository_entity.ExpenseEntity(session).get_expense_by_id(
         pk, user.id
     )
@@ -151,6 +169,8 @@ async def get_expense_by_category_id(
         start_date_str: Union[str, None] = None,
         end_date_str: Union[str, None] = None
 ) -> List[schemas.ExpenseSchema]:
+    """ Get expense by category endpoint
+    """
     start_date, end_date = services.get_formatted_datetime(
         start=start_date_str,
         end=end_date_str
@@ -166,6 +186,8 @@ async def create_expense(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Add expense endpoint
+    """
     result = await repository_entity.ExpenseEntity(session).create(
         data, user.id
     )
@@ -177,10 +199,13 @@ async def create_expense(
 
 @router.patch("/expense/{id}")
 async def update_expense(
-        pk: int, data: schemas.CreateFinance,
+        pk: int,
+        data: schemas.CreateFinance,
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Update expense endpoint
+    """
     result = await repository_entity.ExpenseEntity(session).update(
         pk, data, user.id
     )
@@ -193,6 +218,8 @@ async def delete_expense(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Delete expense endpoint
+    """
     result = await repository_entity.ExpenseEntity(session).delete(
         pk, user.id
     )
@@ -204,6 +231,8 @@ async def get_category_list(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> List[schemas.CategorySchema]:
+    """ Get category list endpoint
+    """
     return await repository_entity.CategoryEntity(session).get_category_list(user.id)
 
 
@@ -212,6 +241,8 @@ async def get_category_by_id(
         pk: int, user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> Union[schemas.CategorySchema, None]:
+    """ Get category by id endpoint
+    """
     return await repository_entity.CategoryEntity(session).get_category_by_id(
         pk, user.id
     )
@@ -223,6 +254,8 @@ async def create_category(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Add category endpoint
+    """
     result = await repository_entity.CategoryEntity(session).create(
         user.id, data
     )
@@ -239,6 +272,8 @@ async def update_category(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Update category endpoint
+    """
     result = await repository_entity.CategoryEntity(session).update(
         pk, data, user.id
     )
@@ -251,6 +286,8 @@ async def delete_category(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Delete category endpoint
+    """
     result = await repository_entity.CategoryEntity(session).delete(
         pk, user.id
     )
@@ -262,6 +299,8 @@ async def get_currency_list(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> List[schemas.CurrencySchema]:
+    """ Get currency list endpoint
+    """
     return await repository_entity.CurrencyEntity(session).get_currency_list(user.id)
 
 
@@ -271,6 +310,8 @@ async def get_currency_by_id(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> Union[schemas.CurrencySchema, None]:
+    """ Get currency by id endpoint
+    """
     return await repository_entity.CurrencyEntity(session).get_currency_by_id(
         pk, user.id
     )
@@ -282,6 +323,8 @@ async def create_currency(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Add currency endpoint
+    """
     result = await repository_entity.CurrencyEntity(session).create(
         user.id, data
     )
@@ -298,6 +341,8 @@ async def update_currency(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Update currency endpoint
+    """
     result = await repository_entity.CurrencyEntity(session).update(
         pk, data, user.id
     )
@@ -310,6 +355,8 @@ async def delete_currency(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Delete currency endpoint
+    """
     result = await repository_entity.CategoryEntity(session).delete(
         pk, user.id
     )
@@ -321,6 +368,8 @@ async def get_account_list(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> List[schemas.AccountSchema]:
+    """ Get account list endpoint
+    """
     return await repository_entity.AccountEntity(session).get_account_list(user.id)
 
 
@@ -330,6 +379,8 @@ async def get_account_by_id(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> Union[schemas.AccountSchema, None]:
+    """ Get account by id endpoint
+    """
     return await repository_entity.AccountEntity(session).get_account_by_id(
         pk, user.id
     )
@@ -341,6 +392,8 @@ async def create_account(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Add account endpoint
+    """
     result = await repository_entity.AccountEntity(session).create(
         data, user.id
     )
@@ -357,6 +410,8 @@ async def update_currency(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Update account endpoint
+    """
     result = await repository_entity.AccountEntity(session).update(
         pk, data, user.id
     )
@@ -369,6 +424,8 @@ async def delete_account(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """ Delete account endpoint
+    """
     result = await repository_entity.AccountEntity(session).delete(
         pk, user.id
     )
