@@ -1,4 +1,4 @@
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, or_
 from MyFinance.models import Expense, Income, Currency, Category, Account
 from MyFinance.schemas import CreateCategory, CreateCurrency, CreateAccount, CreateFinance
 from datetime import datetime
@@ -246,7 +246,7 @@ class ExpenseEntity(FinanceEntityBase):
 class CurrencyEntity(Base):
     """Обращение к БД валют """
     async def get_currency_list(self, user_id: int):
-        query = select(Currency).filter(Currency.user_id == user_id or Currency.user_id == None)
+        query = select(Currency).filter(or_(Currency.user_id == user_id, Currency.user_id == None))
         query_result = await self.session.execute(query)
         return await self._all(query_result)
 
@@ -280,12 +280,12 @@ class CurrencyEntity(Base):
 class CategoryEntity(Base):
     """Обращение к БД категорий """
     async def get_category_list(self, user_id: int):
-        query = select(Category).filter(Category.user_id == user_id or Currency.user_id == None)
+        query = select(Category).filter(or_(Category.user_id == user_id, Category.user_id == None))
         query_result = await self.session.execute(query)
         return await self._all(query_result)
 
-    async def det_category_count(self, user_id: int):
-        query = select(Category).filter(Category.user_id == user_id or Currency.user_id == None)
+    async def get_category_count(self, user_id: int):
+        query = select(Category).filter(or_(Category.user_id == user_id, Category.user_id == None))
         query_result = await self.session.execute(query)
         result = await self._all(query_result)
         return self._count(result)

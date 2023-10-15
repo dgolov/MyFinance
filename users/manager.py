@@ -6,18 +6,18 @@ from fastapi_users import BaseUserManager, IntegerIDMixin
 from .models import User, get_user_db
 
 
-conf = ConnectionConfig(
-    MAIL_USERNAME=MAIL_USERNAME,
-    MAIL_PASSWORD=MAIL_PASSWORD,
-    MAIL_FROM=MAIL_EMAIL,
-    MAIL_PORT=MAIL_PORT,
-    MAIL_SERVER=MAIL_SERVER,
-    MAIL_FROM_NAME="Finance app",
-    MAIL_STARTTLS=True,
-    MAIL_SSL_TLS=False,
-    USE_CREDENTIALS=True,
-    VALIDATE_CERTS=True,
-)
+# conf = ConnectionConfig(
+#     MAIL_USERNAME=MAIL_USERNAME,
+#     MAIL_PASSWORD=MAIL_PASSWORD,
+#     MAIL_FROM=MAIL_EMAIL,
+#     MAIL_PORT=MAIL_PORT,
+#     MAIL_SERVER=MAIL_SERVER,
+#     MAIL_FROM_NAME="Finance app",
+#     MAIL_STARTTLS=True,
+#     MAIL_SSL_TLS=False,
+#     USE_CREDENTIALS=True,
+#     VALIDATE_CERTS=True,
+# )
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
@@ -34,8 +34,9 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             subtype=MessageType.html
         )
         try:
-            fm = FastMail(conf)
-            await fm.send_message(message)
+            pass
+            # fm = FastMail(conf)
+            # await fm.send_message(message)
         except Exception as err:
             print(f"Error send message - {err}")
         else:
