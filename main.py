@@ -4,8 +4,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from routes import routes
 
-import logging
-
+import uvicorn
 
 app = FastAPI()
 
@@ -26,3 +25,7 @@ async def exception_middleware(request: Request, call_next):
     except Exception as e:
         logger.error(str(e))
         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1", port=8001, log_level="info")
