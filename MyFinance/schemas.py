@@ -51,7 +51,7 @@ class CreateAccount(AccountBase):
     class Config:
         validate_assignment = True
 
-    @root_validator
+    @root_validator(pre=True, skip_on_failure=True)
     def update(cls, values):
         values["updated_at"] = datetime.utcnow()
         return values
